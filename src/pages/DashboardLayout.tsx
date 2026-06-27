@@ -5,6 +5,7 @@ import { BottomNav } from "../components/BottomNav"
 import { BookingDetailsDrawer } from "../components/BookingDetailsDrawer"
 import { OffersDrawer } from "../components/OffersDrawer"
 import { CancelModal } from "../components/CancelModal"
+import WorkspaceDetailsDrawer from "../components/WorkspaceDetailsDrawer"
 import { useApp } from "../context/AppContext"
 import type { Booking, Offer } from "../types"
 
@@ -17,7 +18,8 @@ export default function DashboardLayout() {
     setNotifications, 
     triggerToast,
     handleCancelBooking,
-    handleCopyCoupon
+    handleCopyCoupon,
+    handleBookRoom
   } = useApp()
 
   // Derive active tab from location
@@ -47,6 +49,7 @@ export default function DashboardLayout() {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
   const [showOffers, setShowOffers] = useState(false)
   const [bookingToCancel, setBookingToCancel] = useState<Booking | null>(null)
+  const [selectedRoom, setSelectedRoom] = useState<any | null>(null)
 
   // Available loyalty offers
   const offers: Offer[] = [
@@ -71,7 +74,7 @@ export default function DashboardLayout() {
       {/* SCROLLABLE INNER VIEWPORT */}
       <div className="flex-1 overflow-y-auto pb-28 pt-4 scrollbar-none z-10">
         <div className="max-w-3xl mx-auto w-full px-4">
-          <Outlet context={{ setSelectedBooking, setShowOffers, setBookingToCancel }} />
+          <Outlet context={{ setSelectedBooking, setShowOffers, setBookingToCancel, setSelectedRoom }} />
         </div>
       </div>
 
@@ -103,6 +106,19 @@ export default function DashboardLayout() {
         bookingToCancel={bookingToCancel}
         setBookingToCancel={setBookingToCancel}
         handleCancelBooking={handleCancelBooking}
+      />
+
+      {/* WORKSPACE/ROOM DETAIL DRAWER */}
+      <WorkspaceDetailsDrawer 
+        room={selectedRoom} 
+        onClose={() => setSelectedRoom(null)} 
+        onBook={(room, guests, date) => {
+          handleBookRoom({
+            ...room,
+            guests,
+            checkInDate: date
+          })
+        }}
       />
     </>
   )

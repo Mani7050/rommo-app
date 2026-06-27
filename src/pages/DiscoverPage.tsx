@@ -1,6 +1,7 @@
 import { Search, MapPin, Star, Heart } from "lucide-react"
 import { useApp } from "../context/AppContext"
 import { useState } from "react"
+import { useOutletContext } from "react-router-dom"
 
 const discoverRooms = [
   { id: "d1", title: "Luxury Penthouse Suite", location: "Lavelle Road, Bangalore", price: 5499, image: "/comfort_room.png", rating: 4.9, type: "Suite", reviews: 48 },
@@ -11,9 +12,10 @@ const discoverRooms = [
 ]
 
 export default function DiscoverPage() {
-  const { favorites, toggleFavorite, handleBookRoom } = useApp()
+  const { favorites, toggleFavorite } = useApp()
   const [searchQuery, setSearchQuery] = useState("")
   const [activeFilter, setActiveFilter] = useState("All")
+  const { setSelectedRoom } = useOutletContext<any>()
 
   const filteredRooms = discoverRooms.filter((room) => {
     const matchesSearch = 
@@ -79,7 +81,8 @@ export default function DiscoverPage() {
                     <img 
                       src={room.image} 
                       alt={room.title} 
-                      className="h-full w-full object-cover group-hover:scale-103 transition-transform duration-500" 
+                      onClick={() => setSelectedRoom(room)}
+                      className="h-full w-full object-cover group-hover:scale-103 transition-transform duration-500 cursor-pointer" 
                     />
                     {/* Floating badge */}
                     <span className="absolute top-3 left-3 bg-zinc-950/70 backdrop-blur-md px-2.5 py-0.5 text-[9px] font-bold text-white uppercase tracking-wider rounded-none">
@@ -97,36 +100,36 @@ export default function DiscoverPage() {
 
                   {/* Body Details */}
                   <div className="flex flex-col gap-3.5 p-4 flex-1 justify-between">
-                    <div className="flex justify-between items-start gap-1">
-                      <div>
-                        <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white leading-snug group-hover:text-primary transition-colors line-clamp-1">
-                          {room.title}
-                        </h3>
-                        <div className="flex items-center gap-1 mt-1 text-[10px] text-zinc-400 dark:text-zinc-500">
-                          <MapPin className="h-3 w-3 shrink-0" />
-                          <span className="truncate">{room.location}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-0.5 shrink-0">
-                        <Star className="h-3 w-3 fill-yellow-450 text-yellow-450" />
-                        <span className="text-[10px] font-bold text-zinc-800 dark:text-zinc-200">{room.rating}</span>
+                    <div 
+                      onClick={() => setSelectedRoom(room)}
+                      className="cursor-pointer"
+                    >
+                      <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white leading-snug group-hover:text-primary transition-colors line-clamp-1">
+                        {room.title}
+                      </h3>
+                      <div className="flex items-center gap-1 mt-1 text-[10px] text-zinc-400 dark:text-zinc-500">
+                        <MapPin className="h-3 w-3 shrink-0" />
+                        <span className="truncate">{room.location}</span>
                       </div>
                     </div>
-
-                    <div className="flex items-center justify-between border-t border-zinc-100 pt-3 dark:border-zinc-800 mt-2">
-                      <div className="flex flex-col">
-                        <span className="text-[9px] font-extrabold text-zinc-400 uppercase tracking-wider dark:text-zinc-550">Price Starting</span>
-                        <span className="text-sm font-black text-primary">₹{room.price}<span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400">/night</span></span>
-                      </div>
-                      <button 
-                        onClick={() => handleBookRoom(room)}
-                        className="rounded-none bg-primary px-4 py-2 text-xs font-bold text-white hover:bg-primary/95 transition-colors cursor-pointer"
-                      >
-                        Book Now
-                      </button>
+                    <div className="flex items-center gap-0.5 shrink-0">
+                      <Star className="h-3 w-3 fill-yellow-450 text-yellow-450" />
+                      <span className="text-[10px] font-bold text-zinc-800 dark:text-zinc-200">{room.rating}</span>
                     </div>
                   </div>
 
+                  <div className="flex items-center justify-between border-t border-zinc-100 p-4 pt-3 dark:border-zinc-800">
+                    <div className="flex flex-col">
+                      <span className="text-[9px] font-extrabold text-zinc-400 uppercase tracking-wider dark:text-zinc-550">Price Starting</span>
+                      <span className="text-sm font-black text-primary">₹{room.price}<span className="text-[10px] font-bold text-zinc-550 dark:text-zinc-400">/night</span></span>
+                    </div>
+                    <button 
+                      onClick={() => setSelectedRoom(room)}
+                      className="rounded-none bg-primary px-4 py-2 text-xs font-bold text-white hover:bg-primary/95 transition-colors cursor-pointer"
+                    >
+                      Book Now
+                    </button>
+                  </div>
                 </div>
               )
             })}
