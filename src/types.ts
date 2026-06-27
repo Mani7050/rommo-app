@@ -41,3 +41,10 @@ export interface MaintenanceRequest {
   status: "PENDING" | "IN_PROGRESS" | "RESOLVED"
   createdAt: string
 }
+
+export interface UserProfile {
+  name: string
+  email: string
+  phone: string
+  pin: string
+}

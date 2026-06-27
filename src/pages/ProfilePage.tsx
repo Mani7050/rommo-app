@@ -6,8 +6,8 @@ import { useApp } from "../context/AppContext"
 
 export default function ProfilePage() {
   const { theme, setTheme } = useTheme()
-  const { bookings, triggerToast, logout } = useApp()
-  const { setShowMaintenance } = useOutletContext<any>()
+  const { bookings, triggerToast, logout, user } = useApp()
+  const { setShowMaintenance, setShowAccountSettings, setShowSecurityPin } = useOutletContext<any>()
   const navigate = useNavigate()
 
   return (
@@ -16,11 +16,11 @@ export default function ProfilePage() {
       {/* Profile Card */}
       <div className="flex items-center gap-4 bg-linear-to-r from-primary/10 to-primary/5 rounded-none p-5 border border-primary/5 dark:from-primary/15 dark:to-primary/5">
         <div className="relative h-16 w-16 overflow-hidden rounded-none bg-primary text-white flex items-center justify-center font-bold text-2xl shadow-md border border-white/50">
-          MK
+          {user.name.split(" ").map(n => n[0]).join("")}
         </div>
         <div className="flex flex-col">
-          <h3 className="font-bold text-zinc-900 dark:text-zinc-100 text-base leading-tight">Mani Kumar</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">mani.kumar@rommo.in</p>
+          <h3 className="font-bold text-zinc-900 dark:text-zinc-100 text-base leading-tight">{user.name}</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">{user.email}</p>
           <div className="flex items-center gap-1.5 mt-2 bg-primary/20 dark:bg-primary/30 w-fit px-2 py-0.5 rounded-none">
             <Award className="h-3 w-3 text-primary" />
             <span className="text-[10px] font-bold text-primary uppercase tracking-wider">Gold Tier</span>
@@ -67,6 +67,7 @@ export default function ProfilePage() {
 
         <button 
           type="button"
+          onClick={() => setShowAccountSettings(true)}
           className="flex items-center justify-between bg-zinc-50/50 border border-zinc-100 rounded-none px-4 py-3.5 text-sm font-semibold text-foreground dark:bg-zinc-800/30 dark:border-zinc-850 cursor-pointer"
         >
           <div className="flex items-center gap-3">
@@ -78,6 +79,7 @@ export default function ProfilePage() {
 
         <button 
           type="button"
+          onClick={() => setShowSecurityPin(true)}
           className="flex items-center justify-between bg-zinc-50/50 border border-zinc-100 rounded-none px-4 py-3.5 text-sm font-semibold text-foreground dark:bg-zinc-800/30 dark:border-zinc-850 cursor-pointer"
         >
           <div className="flex items-center gap-3">

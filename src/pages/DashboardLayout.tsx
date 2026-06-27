@@ -7,6 +7,8 @@ import { OffersDrawer } from "../components/OffersDrawer"
 import { CancelModal } from "../components/CancelModal"
 import WorkspaceDetailsDrawer from "../components/WorkspaceDetailsDrawer"
 import MaintenanceCleaningDrawer from "../components/MaintenanceCleaningDrawer"
+import AccountSettingsDrawer from "../components/AccountSettingsDrawer"
+import SecurityPinDrawer from "../components/SecurityPinDrawer"
 import { useApp } from "../context/AppContext"
 import type { Booking, Offer } from "../types"
 
@@ -52,6 +54,8 @@ export default function DashboardLayout() {
   const [bookingToCancel, setBookingToCancel] = useState<Booking | null>(null)
   const [selectedRoom, setSelectedRoom] = useState<any | null>(null)
   const [showMaintenance, setShowMaintenance] = useState(false)
+  const [showAccountSettings, setShowAccountSettings] = useState(false)
+  const [showSecurityPin, setShowSecurityPin] = useState(false)
 
   // Available loyalty offers
   const offers: Offer[] = [
@@ -76,7 +80,15 @@ export default function DashboardLayout() {
       {/* SCROLLABLE INNER VIEWPORT */}
       <div className="flex-1 overflow-y-auto pb-28 pt-4 scrollbar-none z-10">
         <div className="max-w-3xl mx-auto w-full px-4">
-          <Outlet context={{ setSelectedBooking, setShowOffers, setBookingToCancel, setSelectedRoom, setShowMaintenance }} />
+          <Outlet context={{ 
+            setSelectedBooking, 
+            setShowOffers, 
+            setBookingToCancel, 
+            setSelectedRoom, 
+            setShowMaintenance,
+            setShowAccountSettings,
+            setShowSecurityPin
+          }} />
         </div>
       </div>
 
@@ -127,6 +139,18 @@ export default function DashboardLayout() {
       <MaintenanceCleaningDrawer 
         isOpen={showMaintenance}
         onClose={() => setShowMaintenance(false)}
+      />
+
+      {/* ACCOUNT SETTINGS DRAWER */}
+      <AccountSettingsDrawer 
+        isOpen={showAccountSettings}
+        onClose={() => setShowAccountSettings(false)}
+      />
+
+      {/* SECURITY PIN DRAWER */}
+      <SecurityPinDrawer 
+        isOpen={showSecurityPin}
+        onClose={() => setShowSecurityPin(false)}
       />
     </>
   )

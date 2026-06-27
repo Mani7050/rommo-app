@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react"
-import type { Booking, Notification, MaintenanceRequest } from "../types"
+import type { Booking, Notification, MaintenanceRequest, UserProfile } from "../types"
 
 interface AppContextType {
   bookings: Booking[]
@@ -22,6 +22,8 @@ interface AppContextType {
   toggleFavorite: (id: string) => void
   maintenanceRequests: MaintenanceRequest[]
   addMaintenanceRequest: (req: Omit<MaintenanceRequest, "id" | "status" | "createdAt">) => void
+  user: UserProfile
+  setUser: React.Dispatch<React.SetStateAction<UserProfile>>
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -29,6 +31,12 @@ const AppContext = createContext<AppContextType | undefined>(undefined)
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [toast, setToast] = useState<{ message: string; visible: boolean }>({ message: "", visible: false })
   const [favorites, setFavorites] = useState<string[]>(["d3"])
+  const [user, setUser] = useState<UserProfile>({
+    name: "Mani Kumar",
+    email: "mani.kumar@rommo.in",
+    phone: "+91 98765 43210",
+    pin: "2468"
+  })
   const [maintenanceRequests, setMaintenanceRequests] = useState<MaintenanceRequest[]>([
     {
       id: "req-1",
@@ -269,7 +277,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       completeOnboarding,
       toggleFavorite,
       maintenanceRequests,
-      addMaintenanceRequest
+      addMaintenanceRequest,
+      user,
+      setUser
     }}>
       {children}
     </AppContext.Provider>

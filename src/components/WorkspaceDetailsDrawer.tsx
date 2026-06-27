@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { X, Star, MapPin, Wifi, Coffee, Users, Tv, Calendar, Plus, Minus, Check } from "lucide-react"
+import { X, Star, MapPin, Wifi, Coffee, Users, Tv, Calendar, Plus, Minus, Check, Map } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface WorkspaceDetailsDrawerProps {
@@ -53,10 +53,14 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
           <div>
             <span className="text-[10px] font-bold text-primary uppercase tracking-widest">{room.type} Details</span>
             <h3 className="text-lg font-black text-zinc-900 dark:text-zinc-100 mt-0.5 leading-snug">{room.title}</h3>
-            <div className="flex items-center gap-1 mt-1.5 text-[10px] text-zinc-400 dark:text-zinc-500">
+            <button 
+              type="button"
+              onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(room.location)}`, "_blank")}
+              className="flex items-center gap-1 mt-1.5 text-[10px] text-zinc-400 hover:text-primary hover:underline transition-colors cursor-pointer dark:text-zinc-550"
+            >
               <MapPin className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
-              <span>{room.location}</span>
-            </div>
+              <span>{room.location} (View on Map)</span>
+            </button>
           </div>
           <button 
             onClick={onClose}
@@ -91,6 +95,25 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
             <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium">
               Premium premium serviced space fully equipped with smart technologies. Ideal for meetings, collaborative work, or high-focus individual sessions. Includes secure printing access and clean pantry services.
             </p>
+          </div>
+
+          {/* Simulated Map View Card */}
+          <div 
+            onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(room.location)}`, "_blank")}
+            className="group relative h-20 w-full overflow-hidden border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950 cursor-pointer flex flex-col justify-end p-2.5 transition-all hover:border-primary/30"
+          >
+            <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#d9531e_1px,transparent_1px)] [background-size:12px_12px] dark:opacity-25"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="flex flex-col items-center gap-1 bg-white/95 dark:bg-zinc-900/95 shadow-md px-3.5 py-2 border border-zinc-100 dark:border-zinc-800 rounded-none group-hover:scale-103 transition-transform duration-300">
+                <div className="flex items-center gap-1.5">
+                  <Map className="h-3.5 w-3.5 text-primary animate-bounce" />
+                  <span className="font-extrabold text-[8px] uppercase tracking-widest text-zinc-800 dark:text-zinc-200">Open in Google Maps</span>
+                </div>
+              </div>
+            </div>
+            <span className="relative z-10 text-[8px] font-bold text-zinc-450 dark:text-zinc-500 truncate w-[75%]">
+              {room.location}
+            </span>
           </div>
 
           {/* Key Amenities */}
