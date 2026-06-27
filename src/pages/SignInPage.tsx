@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { Lock, Eye, EyeOff, Loader2, ChevronLeft, User } from "lucide-react"
+import { Lock, Eye, EyeOff, Loader2, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useApp } from "../context/AppContext"
 
@@ -64,18 +64,8 @@ export default function SignInPage() {
     <div className="flex h-full w-full flex-col bg-muted/45 select-none animate-fadeIn transition-colors duration-300">
       
       {/* Orange Header Section */}
-      <div className="relative bg-primary px-6 pt-6 pb-16 flex flex-col justify-between w-full">
-        <div className="max-w-md mx-auto w-full flex items-center justify-between">
-          {/* Back Button */}
-          <button 
-            type="button"
-            onClick={() => navigate("/onboarding")}
-            className="h-10 w-10 rounded-full bg-primary-foreground/15 hover:bg-primary-foreground/25 flex items-center justify-center text-primary-foreground transition-colors cursor-pointer border border-primary-foreground/5"
-            aria-label="Go back"
-          >
-            <ChevronLeft className="h-5.5 w-5.5" />
-          </button>
-          
+      <div className="relative bg-primary px-6 pt-10 pb-28 flex flex-col justify-between w-full">
+        <div className="max-w-md mx-auto w-full flex items-center justify-end">
           {/* Forgot Password Link */}
           <button 
             type="button"
