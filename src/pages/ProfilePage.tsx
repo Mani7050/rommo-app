@@ -1,5 +1,5 @@
-import { Award, Moon, Sun, Settings, ShieldCheck, LogOut, ChevronRight } from "lucide-react"
-import { useNavigate } from "react-router-dom"
+import { Award, Moon, Sun, Settings, ShieldCheck, LogOut, ChevronRight, Wrench } from "lucide-react"
+import { useNavigate, useOutletContext } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/components/theme-provider"
 import { useApp } from "../context/AppContext"
@@ -7,6 +7,7 @@ import { useApp } from "../context/AppContext"
 export default function ProfilePage() {
   const { theme, setTheme } = useTheme()
   const { bookings, triggerToast, logout } = useApp()
+  const { setShowMaintenance } = useOutletContext<any>()
   const navigate = useNavigate()
 
   return (
@@ -82,6 +83,18 @@ export default function ProfilePage() {
           <div className="flex items-center gap-3">
             <ShieldCheck className="h-4.5 w-4.5 text-zinc-400" />
             <span>Security & PIN</span>
+          </div>
+          <ChevronRight className="h-4 w-4 text-zinc-400" />
+        </button>
+
+        <button 
+          type="button"
+          onClick={() => setShowMaintenance(true)}
+          className="flex items-center justify-between bg-zinc-50/50 border border-zinc-100 rounded-none px-4 py-3.5 text-sm font-semibold text-foreground dark:bg-zinc-800/30 dark:border-zinc-850 cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <Wrench className="h-4.5 w-4.5 text-zinc-400" />
+            <span>Cleaning & Maintenance</span>
           </div>
           <ChevronRight className="h-4 w-4 text-zinc-400" />
         </button>

@@ -31,3 +31,13 @@ export interface Notification {
   time: string
   read: boolean
 }
+
+export interface MaintenanceRequest {
+  id: string
+  bookingTitle: string
+  requestType: "CLEANING" | "MAINTENANCE"
+  category: string
+  details: string
+  status: "PENDING" | "IN_PROGRESS" | "RESOLVED"
+  createdAt: string
+}

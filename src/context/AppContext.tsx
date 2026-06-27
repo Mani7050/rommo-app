@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react"
-import type { Booking, Notification } from "../types"
+import type { Booking, Notification, MaintenanceRequest } from "../types"
 
 interface AppContextType {
   bookings: Booking[]
@@ -20,6 +20,8 @@ interface AppContextType {
   hasSeenOnboarding: boolean
   completeOnboarding: () => void
   toggleFavorite: (id: string) => void
+  maintenanceRequests: MaintenanceRequest[]
+  addMaintenanceRequest: (req: Omit<MaintenanceRequest, "id" | "status" | "createdAt">) => void
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -27,6 +29,26 @@ const AppContext = createContext<AppContextType | undefined>(undefined)
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [toast, setToast] = useState<{ message: string; visible: boolean }>({ message: "", visible: false })
   const [favorites, setFavorites] = useState<string[]>(["d3"])
+  const [maintenanceRequests, setMaintenanceRequests] = useState<MaintenanceRequest[]>([
+    {
+      id: "req-1",
+      bookingTitle: "Urban Studio Room",
+      requestType: "CLEANING",
+      category: "Trash Removal",
+      details: "Please empty the trash cans in the studio.",
+      status: "RESOLVED",
+      createdAt: "25 May, Sat"
+    },
+    {
+      id: "req-2",
+      bookingTitle: "Luxury Penthouse Suite",
+      requestType: "MAINTENANCE",
+      category: "AC Issue",
+      details: "AC thermostat is stuck and temperature cannot be adjusted.",
+      status: "IN_PROGRESS",
+      createdAt: "27 Jun, Sat"
+    }
+  ])
   
   // Auth state initialized from localStorage
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
@@ -213,6 +235,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     triggerToast(`Coupon code "${code}" copied to clipboard!`)
   }
 
+  const addMaintenanceRequest = (req: Omit<MaintenanceRequest, "id" | "status" | "createdAt">) => {
+    const newReq: MaintenanceRequest = {
+      ...req,
+      id: `req-${Date.now()}`,
+      status: "PENDING",
+      createdAt: new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", weekday: "short" })
+    }
+    setMaintenanceRequests(prev => [newReq, ...prev])
+    triggerToast("Request submitted successfully!")
+  }
+
   const unreadCount = notifications.filter(n => !n.read).length
 
   return (
@@ -234,7 +267,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       logout,
       hasSeenOnboarding,
       completeOnboarding,
-      toggleFavorite
+      toggleFavorite,
+      maintenanceRequests,
+      addMaintenanceRequest
     }}>
       {children}
     </AppContext.Provider>

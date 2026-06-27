@@ -6,6 +6,7 @@ import { BookingDetailsDrawer } from "../components/BookingDetailsDrawer"
 import { OffersDrawer } from "../components/OffersDrawer"
 import { CancelModal } from "../components/CancelModal"
 import WorkspaceDetailsDrawer from "../components/WorkspaceDetailsDrawer"
+import MaintenanceCleaningDrawer from "../components/MaintenanceCleaningDrawer"
 import { useApp } from "../context/AppContext"
 import type { Booking, Offer } from "../types"
 
@@ -50,6 +51,7 @@ export default function DashboardLayout() {
   const [showOffers, setShowOffers] = useState(false)
   const [bookingToCancel, setBookingToCancel] = useState<Booking | null>(null)
   const [selectedRoom, setSelectedRoom] = useState<any | null>(null)
+  const [showMaintenance, setShowMaintenance] = useState(false)
 
   // Available loyalty offers
   const offers: Offer[] = [
@@ -74,7 +76,7 @@ export default function DashboardLayout() {
       {/* SCROLLABLE INNER VIEWPORT */}
       <div className="flex-1 overflow-y-auto pb-28 pt-4 scrollbar-none z-10">
         <div className="max-w-3xl mx-auto w-full px-4">
-          <Outlet context={{ setSelectedBooking, setShowOffers, setBookingToCancel, setSelectedRoom }} />
+          <Outlet context={{ setSelectedBooking, setShowOffers, setBookingToCancel, setSelectedRoom, setShowMaintenance }} />
         </div>
       </div>
 
@@ -119,6 +121,12 @@ export default function DashboardLayout() {
             checkInDate: date
           })
         }}
+      />
+
+      {/* MAINTENANCE/CLEANING SERVICES DRAWER */}
+      <MaintenanceCleaningDrawer 
+        isOpen={showMaintenance}
+        onClose={() => setShowMaintenance(false)}
       />
     </>
   )
