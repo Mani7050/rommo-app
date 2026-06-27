@@ -9,6 +9,7 @@ import { AppProvider, useApp } from "./context/AppContext"
 import SplashPage from "./pages/SplashPage"
 import OnboardingPage from "./pages/OnboardingPage"
 import SignInPage from "./pages/SignInPage"
+import SignUpPage from "./pages/SignUpPage"
 import DashboardLayout from "./pages/DashboardLayout"
 import DiscoverPage from "./pages/DiscoverPage"
 import BookingsPage from "./pages/BookingsPage"
@@ -64,6 +65,7 @@ function AppContent() {
           {/* Guest Only Routes */}
           <Route element={<GuestRoute />}>
             <Route path="/signin" element={<SignInPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
           </Route>
 
           {/* Publicly Accessible Onboarding Route (allows refresh/direct testing) */}
