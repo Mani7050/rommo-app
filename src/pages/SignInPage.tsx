@@ -80,7 +80,7 @@ export default function SignInPage() {
           <div className="flex flex-col gap-5">
             {/* Title Block */}
             <div className="mb-2">
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">
+              <h2 className="text-2xl font-semibold text-foreground tracking-tight">
                 Let's sign you in
               </h2>
               <p className="text-xs text-muted-foreground mt-1 font-medium">
@@ -100,7 +100,7 @@ export default function SignInPage() {
                     if (errors.email) setErrors(prev => ({ ...prev, email: undefined }))
                   }}
                   placeholder="Username or Email"
-                  className={`w-full rounded-none border bg-muted/40 py-4 pl-12 pr-4 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
+                  className={`w-full rounded-none border bg-muted/40 py-3 pl-12 pr-4 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
                     errors.email 
                       ? "border-destructive focus:border-destructive" 
                       : "border-border focus:border-primary"
@@ -124,7 +124,7 @@ export default function SignInPage() {
                     if (errors.password) setErrors(prev => ({ ...prev, password: undefined }))
                   }}
                   placeholder="Password"
-                  className={`w-full rounded-none border bg-muted/40 py-4 pl-12 pr-12 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
+                  className={`w-full rounded-none border bg-muted/40 py-3 pl-12 pr-12 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
                     errors.password 
                       ? "border-destructive focus:border-destructive" 
                       : "border-border focus:border-primary"

@@ -37,11 +37,6 @@ export default function OnboardingPage() {
     }
   }
 
-  const handleSkip = () => {
-    completeOnboarding()
-    navigate("/signin")
-  }
-
   return (
     <div className="relative flex h-full w-full flex-col justify-between select-none overflow-hidden transition-colors duration-300">
       
@@ -77,7 +72,7 @@ export default function OnboardingPage() {
           
           {/* Card Text Content */}
           <div className="flex flex-col">
-            <h2 className="text-2xl font-extrabold uppercase tracking-tight text-zinc-900 dark:text-white leading-tight">
+            <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white leading-tight">
               {step.title}
             </h2>
             <p className="text-sm font-medium text-zinc-550 dark:text-zinc-400 mt-2 leading-relaxed">
@@ -86,23 +81,10 @@ export default function OnboardingPage() {
           </div>
 
           {/* Footer Controls Row */}
-          <div className="flex items-center justify-between mt-4 w-full">
-            {/* Skip Button */}
-            <button 
-              onClick={handleSkip}
-              className="text-xs font-black text-zinc-400 hover:text-zinc-650 dark:text-zinc-500 dark:hover:text-zinc-350 tracking-widest uppercase cursor-pointer py-3 transition-colors"
-            >
-              SKIP
-            </button>
-
-            {/* Next circular/expanded orange button */}
+          <div className="flex justify-end mt-5 w-full">
             <button 
               onClick={handleNext}
-              className={`flex items-center justify-center bg-primary hover:bg-primary/95 text-primary-foreground shadow-lg shadow-primary/25 cursor-pointer rounded-full transition-all active:scale-95 border border-primary/10 ${
-                currentStep === onboardingData.length - 1 
-                  ? "px-6 py-4 text-xs font-black uppercase tracking-widest gap-2" 
-                  : "w-14 h-14"
-              }`}
+              className="flex items-center justify-center bg-primary hover:bg-primary/95 text-white shadow-lg shadow-primary/20 cursor-pointer rounded-none px-6 py-3.5 text-xs font-black uppercase tracking-widest gap-2 transition-all duration-200 active:scale-98 border border-primary/10"
             >
               {currentStep === onboardingData.length - 1 ? (
                 <>
@@ -110,7 +92,10 @@ export default function OnboardingPage() {
                   <ArrowRight className="h-4 w-4" />
                 </>
               ) : (
-                <ArrowRight className="h-5 w-5" />
+                <>
+                  NEXT
+                  <ArrowRight className="h-4 w-4" />
+                </>
               )}
             </button>
           </div>

@@ -83,7 +83,7 @@ export default function SignUpPage() {
           <div className="flex flex-col gap-4">
             {/* Title Block */}
             <div className="mb-2">
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">
+              <h2 className="text-2xl font-semibold text-foreground tracking-tight">
                 Let's get registered
               </h2>
               <p className="text-xs text-muted-foreground mt-1">
@@ -103,7 +103,7 @@ export default function SignUpPage() {
                     if (errors.name) setErrors(prev => ({ ...prev, name: undefined }))
                   }}
                   placeholder="Full Name"
-                  className={`w-full rounded-none border bg-muted/40 py-4 pl-12 pr-4 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
+                  className={`w-full rounded-none border bg-muted/40 py-3 pl-12 pr-4 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
                     errors.name 
                       ? "border-destructive focus:border-destructive" 
                       : "border-border focus:border-primary"
@@ -127,7 +127,7 @@ export default function SignUpPage() {
                     if (errors.email) setErrors(prev => ({ ...prev, email: undefined }))
                   }}
                   placeholder="Email Address"
-                  className={`w-full rounded-none border bg-muted/40 py-4 pl-12 pr-4 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
+                  className={`w-full rounded-none border bg-muted/40 py-3 pl-12 pr-4 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
                     errors.email 
                       ? "border-destructive focus:border-destructive" 
                       : "border-border focus:border-primary"
@@ -151,7 +151,7 @@ export default function SignUpPage() {
                     if (errors.password) setErrors(prev => ({ ...prev, password: undefined }))
                   }}
                   placeholder="Password"
-                  className={`w-full rounded-none border bg-muted/40 py-4 pl-12 pr-12 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
+                  className={`w-full rounded-none border bg-muted/40 py-3 pl-12 pr-12 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
                     errors.password 
                       ? "border-destructive focus:border-destructive" 
                       : "border-border focus:border-primary"
@@ -182,7 +182,7 @@ export default function SignUpPage() {
                     if (errors.confirmPassword) setErrors(prev => ({ ...prev, confirmPassword: undefined }))
                   }}
                   placeholder="Confirm Password"
-                  className={`w-full rounded-none border bg-muted/40 py-4 pl-12 pr-12 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
+                  className={`w-full rounded-none border bg-muted/40 py-3 pl-12 pr-12 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
                     errors.confirmPassword 
                       ? "border-destructive focus:border-destructive" 
                       : "border-border focus:border-primary"
