@@ -48,7 +48,7 @@ function AppContent() {
   }, [isAuthenticated, navigate])
 
   return (
-    <div className="relative flex h-screen w-full flex-col overflow-hidden bg-white dark:bg-zinc-900 font-sans transition-colors duration-300">
+    <div className="relative flex h-dvh w-full flex-col overflow-hidden bg-white dark:bg-zinc-900 font-sans transition-colors duration-300">
       
       {/* Interactive Toast */}
       {toast.visible && (
