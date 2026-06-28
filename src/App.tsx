@@ -14,6 +14,7 @@ import DashboardLayout from "./pages/DashboardLayout"
 import DiscoverPage from "./pages/DiscoverPage"
 import BookingsPage from "./pages/BookingsPage"
 import FavoritesPage from "./pages/FavoritesPage"
+import OffersPage from "./pages/OffersPage"
 import ProfilePage from "./pages/ProfilePage"
 
 // Guards
@@ -29,7 +30,7 @@ function GuestRoute() {
   if (!hasSeenOnboarding) {
     return <Navigate to="/onboarding" replace />
   }
-  return isAuthenticated ? <Navigate to="/bookings" replace /> : <Outlet />
+  return isAuthenticated ? <Navigate to="/home" replace /> : <Outlet />
 }
 
 function AppContent() {
@@ -77,12 +78,13 @@ function AppContent() {
               <Route path="/home" element={<DiscoverPage />} />
               <Route path="/bookings" element={<BookingsPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
+              <Route path="/offers" element={<OffersPage />} />
               <Route path="/profile" element={<ProfilePage />} />
             </Route>
           </Route>
 
           {/* Legacy Redirect for /dashboard paths */}
-          <Route path="/dashboard/*" element={<Navigate to="/bookings" replace />} />
+          <Route path="/dashboard/*" element={<Navigate to="/home" replace />} />
 
           {/* Wildcard fallback redirects to Splash */}
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -27,7 +27,7 @@ export default function DashboardLayout() {
   } = useApp()
 
   // Derive active tab from location
-  const [currentNav, setCurrentNav] = useState<"home" | "bookings" | "favorites" | "profile">("bookings")
+  const [currentNav, setCurrentNav] = useState<"home" | "bookings" | "favorites" | "offers" | "profile">("home")
   
   useEffect(() => {
     const path = location.pathname
@@ -37,13 +37,15 @@ export default function DashboardLayout() {
       setCurrentNav("bookings")
     } else if (path.includes("/favorites")) {
       setCurrentNav("favorites")
+    } else if (path.includes("/offers")) {
+      setCurrentNav("offers")
     } else if (path.includes("/profile")) {
       setCurrentNav("profile")
     }
   }, [location])
 
   // Navigation action
-  const handleNavChange = (navId: "home" | "bookings" | "favorites" | "profile") => {
+  const handleNavChange = (navId: "home" | "bookings" | "favorites" | "offers" | "profile") => {
     navigate(`/${navId}`)
     setShowNotifications(false)
   }

@@ -11,7 +11,7 @@ export default function SplashPage() {
     console.log("SplashPage mounted. isAuthenticated state:", isAuthenticated, "hasSeenOnboarding:", hasSeenOnboarding)
     const timer = setTimeout(() => {
       const destination = isAuthenticated 
-        ? "/bookings" 
+        ? "/home" 
         : (hasSeenOnboarding ? "/signin" : "/onboarding")
       console.log("SplashPage timer finished. Navigating to:", destination)
       navigate(destination)

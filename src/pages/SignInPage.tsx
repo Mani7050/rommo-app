@@ -43,7 +43,7 @@ export default function SignInPage() {
       setLoading(false)
       login()
       triggerToast("Welcome back to Rommo!")
-      navigate("/bookings")
+      navigate("/home")
     }, 1500)
   }
 

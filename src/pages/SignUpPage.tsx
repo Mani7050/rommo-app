@@ -57,7 +57,7 @@ export default function SignUpPage() {
       setLoading(false)
       login()
       triggerToast("Account created successfully!")
-      navigate("/bookings")
+      navigate("/home")
     }, 1500)
   }
 

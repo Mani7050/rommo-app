@@ -1,6 +1,5 @@
-import { Award, Moon, Sun, Settings, ShieldCheck, LogOut, ChevronRight, Wrench, HelpCircle } from "lucide-react"
+import { Award, Moon, Sun, Settings, ShieldCheck, LogOut, ChevronRight, Wrench, HelpCircle, Coins, Calendar } from "lucide-react"
 import { useNavigate, useOutletContext } from "react-router-dom"
-import { Button } from "@/components/ui/button"
 import { useTheme } from "@/components/theme-provider"
 import { useApp } from "../context/AppContext"
 
@@ -13,32 +12,48 @@ export default function ProfilePage() {
   return (
     <div className="flex flex-col gap-6 mt-2 animate-fadeIn rounded-none">
       
-      {/* Profile Card */}
-      <div className="flex items-center gap-4 bg-linear-to-r from-primary/10 to-primary/5 rounded-none p-5 border border-primary/5 dark:from-primary/15 dark:to-primary/5">
-        <div className="relative h-16 w-16 overflow-hidden rounded-none bg-primary text-white flex items-center justify-center font-bold text-2xl shadow-md border border-white/50">
+      {/* Clean Premium Profile Header */}
+      <div className="flex items-center gap-4 bg-zinc-50/30 border border-zinc-100 p-4.5 dark:bg-zinc-900/30 dark:border-zinc-850 rounded-none relative">
+        {/* Rounded Profile Avatar */}
+        <div className="h-15 w-15 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xl shadow-xs shrink-0 border border-primary/15">
           {user.name.split(" ").map(n => n[0]).join("")}
         </div>
-        <div className="flex flex-col">
-          <h3 className="font-bold text-zinc-900 dark:text-zinc-100 text-base leading-tight">{user.name}</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">{user.email}</p>
-          <div className="flex items-center gap-1.5 mt-2 bg-primary/20 dark:bg-primary/30 w-fit px-2 py-0.5 rounded-none">
-            <Award className="h-3 w-3 text-primary" />
-            <span className="text-[10px] font-bold text-primary uppercase tracking-wider">Gold Tier</span>
+        
+        <div className="flex flex-col min-w-0">
+          <h3 className="font-extrabold text-zinc-900 dark:text-zinc-100 text-base leading-tight tracking-tight">{user.name}</h3>
+          <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5 truncate">{user.email}</p>
+          
+          <div className="flex items-center gap-1.5 mt-2 bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-primary w-fit rounded-none">
+            <Award className="h-3.5 w-3.5" />
+            Gold Tier
           </div>
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* Clean Dashboard Stats Grid */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-zinc-50 border border-zinc-100 rounded-none p-3.5 text-center dark:bg-zinc-800/40 dark:border-zinc-800">
-          <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Loyalty Points</span>
-          <span className="block text-xl font-extrabold text-primary mt-1">1,250</span>
+        {/* Loyalty Points Card */}
+        <div className="bg-zinc-50/30 border border-zinc-100 p-4 flex items-center gap-3.5 dark:bg-zinc-900/30 dark:border-zinc-850 rounded-none">
+          <div className="p-2 bg-primary/10 text-primary rounded-full shrink-0">
+            <Coins className="h-4.5 w-4.5" />
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="text-[9px] text-zinc-450 font-bold uppercase tracking-widest leading-none">Loyalty Points</span>
+            <span className="text-lg font-black text-primary mt-1.5 leading-none">1,250</span>
+          </div>
         </div>
-        <div className="bg-zinc-50 border border-zinc-100 rounded-none p-3.5 text-center dark:bg-zinc-800/40 dark:border-zinc-800">
-          <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Total Bookings</span>
-          <span className="block text-xl font-extrabold text-primary mt-1">
-            {bookings.filter(b => b.status === "COMPLETED" || b.status === "CONFIRMED").length}
-          </span>
+
+        {/* Total Bookings Card */}
+        <div className="bg-zinc-50/30 border border-zinc-150 p-4 flex items-center gap-3.5 dark:bg-zinc-900/30 dark:border-zinc-850 rounded-none">
+          <div className="p-2 bg-primary/10 text-primary rounded-full shrink-0">
+            <Calendar className="h-4.5 w-4.5" />
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="text-[9px] text-zinc-450 font-bold uppercase tracking-widest leading-none">Total Bookings</span>
+            <span className="text-lg font-black text-primary mt-1.5 leading-none">
+              {bookings.filter(b => b.status === "COMPLETED" || b.status === "CONFIRMED").length}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -112,22 +127,24 @@ export default function ProfilePage() {
           </div>
           <ChevronRight className="h-4 w-4 text-zinc-400" />
         </button>
-      </div>
 
-      {/* Logout Button */}
-      <Button 
-        type="button"
-        onClick={() => {
-          logout()
-          triggerToast("Successfully logged out.")
-          navigate("/")
-        }}
-        variant="outline" 
-        className="mt-4 rounded-none border-red-100 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-950/50 dark:hover:bg-red-950/20 font-semibold cursor-pointer w-full py-6 flex items-center justify-center gap-2 text-sm"
-      >
-        <LogOut className="h-4.5 w-4.5" />
-        Log Out
-      </Button>
+        {/* Integrated Log Out button */}
+        <button 
+          type="button"
+          onClick={() => {
+            logout()
+            triggerToast("Successfully logged out.")
+            navigate("/")
+          }}
+          className="flex items-center justify-between bg-red-50/20 border border-red-100/50 dark:bg-red-950/5 dark:border-red-900/30 rounded-none px-4 py-3.5 text-sm font-semibold text-red-650 hover:bg-red-50/50 dark:text-red-400 dark:hover:bg-red-950/10 cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <LogOut className="h-4.5 w-4.5 text-red-500" />
+            <span>Log Out</span>
+          </div>
+          <ChevronRight className="h-4 w-4 text-red-400" />
+        </button>
+      </div>
     </div>
   )
 }

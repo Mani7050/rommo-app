@@ -1,8 +1,8 @@
-import { Home as HomeIcon, Calendar, Heart, UserCircle } from "lucide-react"
+import { Home as HomeIcon, Calendar, Heart, Gift, UserCircle } from "lucide-react"
 
 interface BottomNavProps {
-  currentNav: "home" | "bookings" | "favorites" | "profile"
-  setCurrentNav: (nav: "home" | "bookings" | "favorites" | "profile") => void
+  currentNav: "home" | "bookings" | "favorites" | "offers" | "profile"
+  setCurrentNav: (nav: "home" | "bookings" | "favorites" | "offers" | "profile") => void
   setShowNotifications: (show: boolean) => void
 }
 
@@ -11,6 +11,7 @@ export function BottomNav({ currentNav, setCurrentNav, setShowNotifications }: B
     { id: "home", label: "Home", icon: HomeIcon },
     { id: "bookings", label: "Bookings", icon: Calendar },
     { id: "favorites", label: "Favorites", icon: Heart },
+    { id: "offers", label: "Offers", icon: Gift },
     { id: "profile", label: "Profile", icon: UserCircle }
   ] as const
 

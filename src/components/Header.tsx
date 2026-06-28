@@ -2,7 +2,7 @@ import type { Notification } from "../types"
 import { Bell } from "lucide-react"
 
 interface HeaderProps {
-  currentNav: "home" | "bookings" | "favorites" | "profile"
+  currentNav: "home" | "bookings" | "favorites" | "offers" | "profile"
   unreadCount: number
   showNotifications: boolean
   setShowNotifications: (show: boolean) => void
@@ -24,23 +24,24 @@ export function Header({
 
   return (
     <div className="border-b border-zinc-100 dark:border-zinc-800/80 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md z-20 shrink-0 rounded-none w-full">
-      <div className="max-w-3xl mx-auto w-full flex items-center justify-between px-4 py-3">
-        <div>
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Welcome back</span>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+      <div className="max-w-3xl mx-auto w-full flex items-center justify-between px-4 py-2">
+        <div className="flex flex-col">
+          <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest leading-none">Welcome back</span>
+          <h1 className="text-lg font-extrabold tracking-tight text-foreground mt-0.5 leading-snug">
             {currentNav === "home" && "Discover Space"}
             {currentNav === "bookings" && "My Bookings"}
             {currentNav === "favorites" && "Saved Spaces"}
+            {currentNav === "offers" && "Offers & Perks"}
           </h1>
         </div>
         <div className="relative">
           <button 
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative rounded-none p-2.5 bg-zinc-50 border border-zinc-100 text-zinc-700 hover:bg-zinc-100 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-200 transition-all duration-200 cursor-pointer"
+            className="relative rounded-none p-1.5 bg-zinc-50 border border-zinc-100 text-zinc-700 hover:bg-zinc-100 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-200 transition-all duration-200 cursor-pointer"
           >
-            <Bell className="h-5 w-5" />
+            <Bell className="h-4 w-4" />
             {unreadCount > 0 && (
-              <span className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-none bg-primary text-[10px] font-bold text-white ring-2 ring-white dark:ring-zinc-900 animate-pulse">
+              <span className="absolute -top-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-none bg-primary text-[9px] font-bold text-white ring-2 ring-white dark:ring-zinc-900 animate-pulse">
                 {unreadCount}
               </span>
             )}
@@ -48,7 +49,7 @@ export function Header({
 
           {/* Notifications Center Panel */}
           {showNotifications && (
-            <div className="absolute right-0 mt-3 z-30 w-72 rounded-none border border-zinc-100 bg-white p-3 shadow-xl dark:border-zinc-800 dark:bg-zinc-805 animate-in fade-in-50 slide-in-from-top-3 duration-200">
+            <div className="absolute right-0 mt-2 z-30 w-72 rounded-none border border-zinc-100 bg-white p-3 shadow-xl dark:border-zinc-800 dark:bg-zinc-805 animate-in fade-in-50 slide-in-from-top-3 duration-200">
               <div className="flex items-center justify-between border-b border-zinc-100 pb-2 mb-2 dark:border-zinc-700">
                 <span className="font-bold text-sm text-foreground flex items-center gap-1.5">
                   Notifications

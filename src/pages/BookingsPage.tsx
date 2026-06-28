@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Calendar, Gift, MapPin, Star } from "lucide-react"
-import { useOutletContext } from "react-router-dom"
+import { useOutletContext, useNavigate } from "react-router-dom"
 import { useApp } from "../context/AppContext"
 import type { Booking } from "../types"
 
@@ -12,8 +12,9 @@ interface DashboardOutletContext {
 
 export default function BookingsPage() {
   const { bookings } = useApp()
-  const { setSelectedBooking, setShowOffers, setBookingToCancel } = useOutletContext<DashboardOutletContext>()
+  const { setSelectedBooking, setBookingToCancel } = useOutletContext<DashboardOutletContext>()
   const [bookingTab, setBookingTab] = useState<"upcoming" | "completed" | "cancelled">("upcoming")
+  const navigate = useNavigate()
 
   const filteredBookings = bookings.filter((b) => {
     if (bookingTab === "upcoming") return b.status === "CONFIRMED" || b.status === "PENDING"
@@ -51,7 +52,7 @@ export default function BookingsPage() {
         </div>
         <button 
           type="button"
-          onClick={() => setShowOffers(true)}
+          onClick={() => navigate("/offers")}
           className="rounded-none bg-white p-3 shadow-md hover:scale-105 active:scale-95 transition-all text-primary cursor-pointer z-10"
         >
           <Gift className="h-5.5 w-5.5" />
