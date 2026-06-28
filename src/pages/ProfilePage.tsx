@@ -120,7 +120,7 @@ export default function ProfilePage() {
         onClick={() => {
           logout()
           triggerToast("Successfully logged out.")
-          navigate("/signin")
+          navigate("/")
         }}
         variant="outline" 
         className="mt-4 rounded-none border-red-100 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-950/50 dark:hover:bg-red-950/20 font-semibold cursor-pointer w-full py-6 flex items-center justify-center gap-2 text-sm"

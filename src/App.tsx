@@ -20,7 +20,7 @@ import ProfilePage from "./pages/ProfilePage"
 function ProtectedRoute() {
   const { isAuthenticated } = useApp()
   console.log("ProtectedRoute evaluated. isAuthenticated:", isAuthenticated)
-  return isAuthenticated ? <Outlet /> : <Navigate to="/signin" replace />
+  return isAuthenticated ? <Outlet /> : <Navigate to="/" replace />
 }
 
 function GuestRoute() {
