@@ -80,7 +80,7 @@ export default function DashboardLayout() {
       />
 
       {/* SCROLLABLE INNER VIEWPORT */}
-      <div className="flex-1 overflow-y-auto pb-28 pt-4 scrollbar-none z-10">
+      <div className="flex-1 overflow-y-auto pb-6 pt-4 scrollbar-none z-10">
         <div className="max-w-3xl mx-auto w-full px-4">
           <Outlet context={{ 
             setSelectedBooking, 

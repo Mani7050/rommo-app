@@ -15,7 +15,7 @@ export function BottomNav({ currentNav, setCurrentNav, setShowNotifications }: B
   ] as const
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 z-20 border-t border-zinc-100 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/95 rounded-none w-full">
+    <div className="w-full border-t border-zinc-100 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/95 rounded-none z-20 shrink-0">
       <div className="max-w-3xl mx-auto w-full flex px-4 py-2 pb-6 justify-between">
         {tabs.map((item) => {
           const Icon = item.icon

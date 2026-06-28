@@ -1,23 +1,25 @@
 import { Search, MapPin, Star, Heart } from "lucide-react"
 import { useApp } from "../context/AppContext"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useOutletContext } from "react-router-dom"
-
-const discoverRooms = [
-  { id: "d1", title: "Luxury Penthouse Suite", location: "Lavelle Road, Bangalore", price: 5499, image: "/comfort_room.png", rating: 4.9, type: "Suite", reviews: 48 },
-  { id: "d2", title: "Creative Focus Cabin", location: "HSR Layout, Bangalore", price: 650, image: "/meeting_room.png", rating: 4.7, type: "Workspace", reviews: 112 },
-  { id: "d3", title: "Greenery Studio Apartment", location: "Koramangala, Bangalore", price: 1899, image: "/urban_studio.png", rating: 4.8, type: "Room", reviews: 89 },
-  { id: "d4", title: "Executive Boardroom", location: "Indiranagar, Bangalore", price: 1500, image: "/meeting_room.png", rating: 4.6, type: "Workspace", reviews: 34 },
-  { id: "d5", title: "Bachelor Monthly Room", location: "Koramangala, Bangalore", price: 14500, image: "/urban_studio.png", rating: 4.5, type: "Monthly", reviews: 67 }
-]
+import { getWorkspaces } from "../lib/db-service"
 
 export default function DiscoverPage() {
   const { favorites, toggleFavorite } = useApp()
   const [searchQuery, setSearchQuery] = useState("")
   const [activeFilter, setActiveFilter] = useState("All")
+  const [workspaces, setWorkspaces] = useState<any[]>([])
   const { setSelectedRoom } = useOutletContext<any>()
 
-  const filteredRooms = discoverRooms.filter((room) => {
+  useEffect(() => {
+    getWorkspaces().then(setWorkspaces)
+  }, [])
+
+  // Filter workspaces that are Available (or not in maintenance, optional filter but good to check status)
+  const filteredRooms = workspaces.filter((room) => {
+    // Only display rooms that are Available, or show all if desired. Standard co-working apps show available ones.
+    const isAvailable = room.status !== "Maintenance"
+    
     const matchesSearch = 
       room.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
       room.location.toLowerCase().includes(searchQuery.toLowerCase())
@@ -26,7 +28,7 @@ export default function DiscoverPage() {
       activeFilter === "All" || 
       room.type.toLowerCase() === activeFilter.toLowerCase()
 
-    return matchesSearch && matchesFilter
+    return isAvailable && matchesSearch && matchesFilter
   })
 
   return (

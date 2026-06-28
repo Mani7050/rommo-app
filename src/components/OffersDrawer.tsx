@@ -12,7 +12,7 @@ export function OffersDrawer({ showOffers, setShowOffers, offers, handleCopyCoup
   if (!showOffers) return null
 
   return (
-    <div className="absolute inset-0 z-40 bg-zinc-900/60 backdrop-blur-xs flex items-end animate-fadeIn rounded-none">
+    <div className="fixed inset-0 z-50 bg-zinc-900/60 backdrop-blur-xs flex items-end animate-fadeIn rounded-none">
       <div className="w-full bg-white rounded-t-[32px] rounded-b-none p-6 max-h-[85%] overflow-y-auto shadow-2xl dark:bg-zinc-900 animate-slideUp">
         <div className="flex items-center justify-between border-b border-zinc-100 pb-4 mb-4 dark:border-zinc-800">
           <div>
