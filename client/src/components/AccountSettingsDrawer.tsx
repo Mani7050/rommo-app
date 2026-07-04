@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
-import { X, User, Mail, Phone, Check } from "lucide-react"
+import { X, User, Mail, Phone, MapPin, Loader2 } from "lucide-react"
 import { useApp } from "../context/AppContext"
 import { Button } from "@/components/ui/button"
+import { API_BASE_URL } from "../config"
 
 interface AccountSettingsDrawerProps {
   isOpen: boolean
@@ -14,37 +15,59 @@ export default function AccountSettingsDrawer({ isOpen, onClose }: AccountSettin
   const { user, setUser, triggerToast } = useApp()
   
   // Form states initialized with context values
-  const [name, setName] = useState(user.name)
-  const [email, setEmail] = useState(user.email)
-  const [phone, setPhone] = useState(user.phone)
+  const [name, setName] = useState(user.name || "")
+  const [email, setEmail] = useState(user.email || "")
+  const [phone, setPhone] = useState(user.phone || "")
+  const [address, setAddress] = useState(user.address || "")
   const [isSaving, setIsSaving] = useState(false)
 
   // Reset form values if user context changes
   useEffect(() => {
-    setName(user.name)
-    setEmail(user.email)
-    setPhone(user.phone)
+    setName(user.name || "")
+    setEmail(user.email || "")
+    setPhone(user.phone || "")
+    setAddress(user.address || "")
   }, [user])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name.trim() || !email.trim() || !phone.trim()) {
-      triggerToast("All fields are required!")
+    if (!name.trim()) {
+      triggerToast("Name is required!")
       return
     }
 
     setIsSaving(true)
-    setTimeout(() => {
-      setUser(prev => ({
-        ...prev,
-        name,
-        email,
-        phone
-      }))
-      triggerToast("Account details updated successfully!")
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/update-profile`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: user.email, name, phone, address })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setUser(prev => ({
+          ...prev,
+          name: data.user.name,
+          email: data.user.email,
+          phone: data.user.phone,
+          pin: data.user.pin,
+          address: data.user.address
+        }))
+        // Update localStorage as well
+        localStorage.setItem("rommo_user", JSON.stringify(data.user))
+        triggerToast("Account details updated successfully!")
+        onClose()
+      } else {
+        triggerToast(data.error || "Failed to update profile")
+      }
+    } catch (err) {
+      console.error(err)
+      triggerToast("Failed to connect to server")
+    } finally {
       setIsSaving(false)
-      onClose()
-    }, 800)
+    }
   }
 
   return (
@@ -89,16 +112,16 @@ export default function AccountSettingsDrawer({ isOpen, onClose }: AccountSettin
             </div>
           </div>
 
-          {/* Email Field */}
-          <div className="flex flex-col gap-1.5">
-            <label className="font-extrabold text-zinc-400 dark:text-zinc-550 uppercase tracking-wider text-[9px]">Email Address</label>
-            <div className="relative flex items-center border border-zinc-200 dark:border-zinc-800 px-3 py-2.5 bg-zinc-50/50 dark:bg-zinc-900/30">
+          {/* Email Field - Disabled */}
+          <div className="flex flex-col gap-1.5 opacity-70">
+            <label className="font-extrabold text-zinc-450 dark:text-zinc-550 uppercase tracking-wider text-[9px]">Email Address (Cannot be changed)</label>
+            <div className="relative flex items-center border border-zinc-150 dark:border-zinc-850 px-3 py-2.5 bg-zinc-100/50 dark:bg-zinc-950/20">
               <Mail className="h-4 w-4 text-zinc-400 mr-2.5 shrink-0" />
               <input 
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-transparent text-zinc-900 dark:text-white font-extrabold focus:outline-hidden"
+                disabled
+                className="w-full bg-transparent text-zinc-500 dark:text-zinc-450 font-extrabold focus:outline-hidden cursor-not-allowed"
                 placeholder="Enter email address"
                 required
               />
@@ -116,7 +139,21 @@ export default function AccountSettingsDrawer({ isOpen, onClose }: AccountSettin
                 onChange={(e) => setPhone(e.target.value)}
                 className="w-full bg-transparent text-zinc-900 dark:text-white font-extrabold focus:outline-hidden"
                 placeholder="Enter phone number"
-                required
+              />
+            </div>
+          </div>
+
+          {/* Address Field */}
+          <div className="flex flex-col gap-1.5">
+            <label className="font-extrabold text-zinc-400 dark:text-zinc-550 uppercase tracking-wider text-[9px]">Home / Office Address</label>
+            <div className="relative flex items-start border border-zinc-200 dark:border-zinc-800 px-3 py-2.5 bg-zinc-50/50 dark:bg-zinc-900/30">
+              <MapPin className="h-4 w-4 text-zinc-400 mr-2.5 mt-0.5 shrink-0" />
+              <textarea 
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                rows={3}
+                className="w-full bg-transparent text-zinc-900 dark:text-white font-extrabold focus:outline-hidden resize-none leading-relaxed"
+                placeholder="Enter your address (e.g., Koramangala 4th Block, Bangalore)"
               />
             </div>
           </div>
@@ -129,7 +166,7 @@ export default function AccountSettingsDrawer({ isOpen, onClose }: AccountSettin
           >
             {isSaving ? (
               <>
-                <Check className="h-4 w-4 mr-1.5" />
+                <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
                 SAVING CHANGES...
               </>
             ) : (

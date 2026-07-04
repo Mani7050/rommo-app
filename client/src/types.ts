@@ -47,4 +47,5 @@ export interface UserProfile {
   email: string
   phone: string
   pin: string
+  address?: string
 }

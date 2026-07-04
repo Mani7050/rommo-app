@@ -64,7 +64,7 @@ export default function SignUpPage() {
       })
       const data = await res.json()
       if (res.ok) {
-        login({ name, email })
+        login(data.user)
         triggerToast("Account created successfully!")
         navigate("/home")
       } else {

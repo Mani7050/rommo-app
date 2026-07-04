@@ -1,7 +1,8 @@
 import { useState } from "react"
-import { X, Key, Eye, EyeOff, Check, Fingerprint } from "lucide-react"
+import { X, Key, Eye, EyeOff, Fingerprint, Loader2 } from "lucide-react"
 import { useApp } from "../context/AppContext"
 import { Button } from "@/components/ui/button"
+import { API_BASE_URL } from "../config"
 
 interface SecurityPinDrawerProps {
   isOpen: boolean
@@ -19,7 +20,7 @@ export default function SecurityPinDrawer({ isOpen, onClose }: SecurityPinDrawer
   const [biometrics, setBiometrics] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (newPin.length !== 4 || isNaN(Number(newPin))) {
@@ -33,17 +34,36 @@ export default function SecurityPinDrawer({ isOpen, onClose }: SecurityPinDrawer
     }
 
     setIsSaving(true)
-    setTimeout(() => {
-      setUser(prev => ({
-        ...prev,
-        pin: newPin
-      }))
-      triggerToast("Security PIN updated successfully!")
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/update-pin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: user.email, pin: newPin })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setUser(prev => ({
+          ...prev,
+          pin: data.pin
+        }))
+        // Update localStorage
+        const updatedUser = { ...user, pin: data.pin }
+        localStorage.setItem("rommo_user", JSON.stringify(updatedUser))
+        triggerToast("Security PIN updated successfully!")
+        setNewPin("")
+        setConfirmPin("")
+        onClose()
+      } else {
+        triggerToast(data.error || "Failed to update PIN")
+      }
+    } catch (err) {
+      console.error(err)
+      triggerToast("Failed to connect to server")
+    } finally {
       setIsSaving(false)
-      setNewPin("")
-      setConfirmPin("")
-      onClose()
-    }, 800)
+    }
   }
 
   return (
@@ -152,7 +172,7 @@ export default function SecurityPinDrawer({ isOpen, onClose }: SecurityPinDrawer
             >
               {isSaving ? (
                 <>
-                  <Check className="h-4 w-4 mr-1.5" />
+                  <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
                   UPDATING PIN...
                 </>
               ) : (

@@ -207,6 +207,9 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  phone: { type: String, default: "" },
+  pin: { type: String, default: "2468" },
+  address: { type: String, default: "" },
   createdAt: { type: Date, default: Date.now },
   resetOtp: { type: String },
   resetOtpExpires: { type: Date }
@@ -277,7 +280,7 @@ app.post("/api/auth/signup", async (req, res) => {
     // Send welcome email asynchronously
     sendWelcomeEmail(newUser.email, newUser.name)
 
-    res.status(201).json({ message: "Registration successful", user: { name: newUser.name, email: newUser.email } })
+    res.status(201).json({ message: "Registration successful", user: { name: newUser.name, email: newUser.email, phone: newUser.phone, pin: newUser.pin, address: newUser.address } })
   } catch (err) {
     console.error("Signup error:", err)
     res.status(500).json({ error: "Failed to register user" })
@@ -304,7 +307,7 @@ app.post("/api/auth/signin", async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password" })
     }
 
-    res.json({ message: "Login successful", user: { name: user.name, email: user.email } })
+    res.json({ message: "Login successful", user: { name: user.name, email: user.email, phone: user.phone || "", pin: user.pin || "2468", address: user.address || "" } })
   } catch (err) {
     console.error("Signin error:", err)
     res.status(500).json({ error: "Failed to sign in" })
@@ -461,6 +464,69 @@ app.post("/api/auth/reset-password", async (req, res) => {
   } catch (err) {
     console.error("Reset password error:", err)
     res.status(500).json({ error: "Failed to reset password" })
+  }
+})
+
+// Update Profile
+app.post("/api/auth/update-profile", async (req, res) => {
+  const { email, name, phone, address } = req.body
+  if (!email || !name) {
+    return res.status(400).json({ error: "Name and email are required" })
+  }
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: "Database not connected" })
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() })
+    if (!user) {
+      return res.status(404).json({ error: "User not found" })
+    }
+
+    user.name = name
+    user.phone = phone || ""
+    user.address = address || ""
+    await user.save()
+
+    res.json({ 
+      message: "Profile updated successfully", 
+      user: { 
+        name: user.name, 
+        email: user.email, 
+        phone: user.phone, 
+        pin: user.pin || "2468",
+        address: user.address || ""
+      } 
+    })
+  } catch (err) {
+    console.error("Update profile error:", err)
+    res.status(500).json({ error: "Failed to update profile details" })
+  }
+})
+
+// Update PIN
+app.post("/api/auth/update-pin", async (req, res) => {
+  const { email, pin } = req.body
+  if (!email || !pin || pin.length !== 4) {
+    return res.status(400).json({ error: "Email and a valid 4-digit PIN are required" })
+  }
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: "Database not connected" })
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() })
+    if (!user) {
+      return res.status(404).json({ error: "User not found" })
+    }
+
+    user.pin = pin
+    await user.save()
+
+    res.json({ message: "Security PIN updated successfully", pin: user.pin })
+  } catch (err) {
+    console.error("Update pin error:", err)
+    res.status(500).json({ error: "Failed to update security PIN" })
   }
 })
 

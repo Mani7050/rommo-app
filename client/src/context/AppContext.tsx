@@ -42,7 +42,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       name: "Mani Kumar",
       email: "mani.kumar@rommo.in",
       phone: "+91 98765 43210",
-      pin: "2468"
+      pin: "2468",
+      address: ""
     }
   })
   const [maintenanceRequests, setMaintenanceRequests] = useState<MaintenanceRequest[]>([
@@ -176,7 +177,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         name: userData.name || prev.name,
         email: userData.email || prev.email,
         phone: userData.phone || prev.phone || "+91 98765 43210",
-        pin: userData.pin || prev.pin || "2468"
+        pin: userData.pin || prev.pin || "2468",
+        address: userData.address || prev.address || ""
       }))
     }
     setIsAuthenticated(true)
