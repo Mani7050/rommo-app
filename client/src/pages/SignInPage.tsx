@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { API_BASE_URL } from "../config"
-import { Lock, Eye, EyeOff, Loader2, User } from "lucide-react"
+import { Lock, Eye, EyeOff, Loader2, User, Mail, KeyRound, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useApp } from "../context/AppContext"
 
@@ -13,6 +13,13 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false)
   const [rememberMe, setRememberMe] = useState(true)
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
+  
+  // Forgot password flow state
+  const [flow, setFlow] = useState<"signin" | "forgot" | "verify" | "reset">("signin")
+  const [resetEmail, setResetEmail] = useState("")
+  const [otp, setOtp] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   
   const navigate = useNavigate()
   const { triggerToast, login } = useApp()
@@ -64,11 +71,114 @@ export default function SignInPage() {
     }
   }
 
+  const handleSendOtp = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!resetEmail) {
+      triggerToast("Please enter your email address")
+      return
+    }
+    if (!/\S+@\S+\.\S+/.test(resetEmail)) {
+      triggerToast("Please enter a valid email address")
+      return
+    }
 
+    setLoading(true)
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: resetEmail })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        triggerToast("OTP code sent successfully!")
+        setFlow("verify")
+      } else {
+        triggerToast(data.error || "Failed to send OTP")
+      }
+    } catch (err) {
+      console.error(err)
+      triggerToast("Failed to connect to server")
+    } finally {
+      setLoading(false)
+    }
+  }
 
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!otp || otp.length !== 6) {
+      triggerToast("Please enter a valid 6-digit OTP")
+      return
+    }
+
+    setLoading(true)
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/verify-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: resetEmail, otp })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        triggerToast("OTP verified successfully!")
+        setFlow("reset")
+      } else {
+        triggerToast(data.error || "Verification failed")
+      }
+    } catch (err) {
+      console.error(err)
+      triggerToast("Failed to connect to server")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newPassword || newPassword.length < 6) {
+      triggerToast("Password must be at least 6 characters")
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      triggerToast("Passwords do not match")
+      return
+    }
+
+    setLoading(true)
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: resetEmail, otp, newPassword })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        triggerToast("Password reset successfully! Please sign in.")
+        setResetEmail("")
+        setOtp("")
+        setNewPassword("")
+        setConfirmPassword("")
+        setFlow("signin")
+      } else {
+        triggerToast(data.error || "Password reset failed")
+      }
+    } catch (err) {
+      console.error(err)
+      triggerToast("Failed to connect to server")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleForgotPassword = () => {
-    triggerToast("Password reset link sent to your email!")
+    setFlow("forgot")
+  }
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    if (flow === "signin") return handleSubmit(e)
+    if (flow === "forgot") return handleSendOtp(e)
+    if (flow === "verify") return handleVerifyOtp(e)
+    if (flow === "reset") return handleResetPassword(e)
   }
 
   return (
@@ -90,133 +200,313 @@ export default function SignInPage() {
       {/* Overlapping White Form Container */}
       <div className="flex-1 flex flex-col bg-card text-card-foreground rounded-t-[32px] -mt-8 pt-8 px-6 pb-6 z-10 shadow-lg w-full">
         
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto w-full flex-1 flex flex-col justify-between">
+        <form onSubmit={handleFormSubmit} className="max-w-md mx-auto w-full flex-1 flex flex-col justify-between">
           
-          {/* Input details & Form Fields */}
-          <div className="flex flex-col gap-5">
-            {/* Title Block */}
-            <div className="mb-2">
-              <h2 className="text-2xl font-semibold text-foreground tracking-tight">
-                Let's sign you in
-              </h2>
-              <p className="text-xs text-muted-foreground mt-1 font-medium">
-                Good to see you back.
-              </p>
-            </div>
+          {flow === "signin" && (
+            <>
+              {/* Input details & Form Fields */}
+              <div className="flex flex-col gap-5">
+                {/* Title Block */}
+                <div className="mb-2">
+                  <h2 className="text-2xl font-semibold text-foreground tracking-tight">
+                    Let's sign you in
+                  </h2>
+                  <p className="text-xs text-muted-foreground mt-1 font-medium">
+                    Good to see you back.
+                  </p>
+                </div>
 
-            {/* Email/Username Input */}
-            <div className="flex flex-col gap-1">
-              <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <input 
-                  type="text"
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value)
-                    if (errors.email) setErrors(prev => ({ ...prev, email: undefined }))
-                  }}
-                  placeholder="Username or Email"
-                  className={`w-full rounded-none border bg-muted/40 py-3 pl-12 pr-10 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
-                    errors.email 
-                      ? "border-destructive focus:border-destructive" 
-                      : (/\S+@\S+\.\S+/.test(email) 
-                          ? "border-emerald-500 focus:border-emerald-500" 
-                          : "border-border focus:border-primary")
-                  }`}
-                />
-                {/\S+@\S+\.\S+/.test(email) && (
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-emerald-500 text-white animate-fadeIn">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-3 h-3">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                    </svg>
+                {/* Email/Username Input */}
+                <div className="flex flex-col gap-1">
+                  <div className="relative">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <input 
+                      type="text"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value)
+                        if (errors.email) setErrors(prev => ({ ...prev, email: undefined }))
+                      }}
+                      placeholder="Username or Email"
+                      className={`w-full rounded-none border bg-muted/40 py-3 pl-12 pr-10 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
+                        errors.email 
+                          ? "border-destructive focus:border-destructive" 
+                          : (/\S+@\S+\.\S+/.test(email) 
+                              ? "border-emerald-500 focus:border-emerald-500" 
+                              : "border-border focus:border-primary")
+                      }`}
+                    />
+                    {/\S+@\S+\.\S+/.test(email) && (
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-emerald-500 text-white animate-fadeIn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-3 h-3">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                      </span>
+                    )}
+                  </div>
+                  {errors.email && (
+                    <span className="text-[10px] font-bold text-destructive px-1">{errors.email}</span>
+                  )}
+                </div>
+
+                {/* Password Input */}
+                <div className="flex flex-col gap-1">
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <input 
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value)
+                        if (errors.password) setErrors(prev => ({ ...prev, password: undefined }))
+                      }}
+                      placeholder="Password"
+                      className={`w-full rounded-none border bg-muted/40 py-3 pl-12 pr-12 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
+                        errors.password 
+                          ? "border-destructive focus:border-destructive" 
+                          : "border-border focus:border-primary"
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 p-0.5 text-muted-foreground hover:text-foreground cursor-pointer"
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <span className="text-[10px] font-bold text-destructive px-1">{errors.password}</span>
+                  )}
+                </div>
+
+                {/* Remember Me Slider Switch */}
+                <div className="flex items-center justify-between py-1 mt-1">
+                  <span className="text-xs font-bold text-muted-foreground">
+                    Remember me next time
                   </span>
-                )}
+                  <button
+                    type="button"
+                    onClick={() => setRememberMe(!rememberMe)}
+                    className={`relative inline-flex h-6.5 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
+                      rememberMe ? "bg-primary" : "bg-muted"
+                    }`}
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-5.5 w-5.5 transform rounded-full bg-background shadow-md ring-0 transition duration-200 ease-in-out ${
+                        rememberMe ? "translate-x-5.5" : "translate-x-0"
+                      }`}
+                    />
+                  </button>
+                </div>
               </div>
-              {errors.email && (
-                <span className="text-[10px] font-bold text-destructive px-1">{errors.email}</span>
-              )}
-            </div>
 
-            {/* Password Input */}
-            <div className="flex flex-col gap-1">
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <input 
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value)
-                    if (errors.password) setErrors(prev => ({ ...prev, password: undefined }))
-                  }}
-                  placeholder="Password"
-                  className={`w-full rounded-none border bg-muted/40 py-3 pl-12 pr-12 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
-                    errors.password 
-                      ? "border-destructive focus:border-destructive" 
-                      : "border-border focus:border-primary"
-                  }`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-0.5 text-muted-foreground hover:text-foreground cursor-pointer"
+              {/* Submit/Sign In Button */}
+              <div className="mt-8 flex flex-col gap-4">
+                <Button 
+                  type="submit"
+                  disabled={loading}
+                  className="rounded-none py-6 font-extrabold uppercase tracking-widest text-primary-foreground bg-primary hover:bg-primary/95 flex items-center justify-center gap-2 text-xs w-full cursor-pointer shadow-md shadow-primary/25 border border-primary/10"
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin text-primary-foreground" />
+                      SIGNING IN...
+                    </>
+                  ) : (
+                    "SIGN IN"
+                  )}
+                </Button>
+                
+                <div className="text-center text-xs text-muted-foreground">
+                  Don&apos;t have an account?{" "}
+                  <button 
+                    type="button" 
+                    onClick={() => navigate("/signup")} 
+                    className="font-bold text-primary hover:underline cursor-pointer"
+                  >
+                    Create account
+                  </button>
+                </div>
               </div>
-              {errors.password && (
-                <span className="text-[10px] font-bold text-destructive px-1">{errors.password}</span>
-              )}
-            </div>
+            </>
+          )}
 
-            {/* Remember Me Slider Switch */}
-            <div className="flex items-center justify-between py-1 mt-1">
-              <span className="text-xs font-bold text-muted-foreground">
-                Remember me next time
-              </span>
-              <button
-                type="button"
-                onClick={() => setRememberMe(!rememberMe)}
-                className={`relative inline-flex h-6.5 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
-                  rememberMe ? "bg-primary" : "bg-muted"
-                }`}
-              >
-                <span
-                  className={`pointer-events-none inline-block h-5.5 w-5.5 transform rounded-full bg-background shadow-md ring-0 transition duration-200 ease-in-out ${
-                    rememberMe ? "translate-x-5.5" : "translate-x-0"
-                  }`}
-                />
-              </button>
-            </div>
-          </div>
+          {flow === "forgot" && (
+            <>
+              {/* Input details & Form Fields */}
+              <div className="flex flex-col gap-5">
+                {/* Title Block */}
+                <div className="mb-2">
+                  <button 
+                    type="button" 
+                    onClick={() => setFlow("signin")} 
+                    className="flex items-center gap-1 text-xs font-bold text-muted-foreground hover:text-foreground mb-4 transition-colors"
+                  >
+                    <ArrowLeft className="h-4 w-4" /> Back to Sign In
+                  </button>
+                  <h2 className="text-2xl font-semibold text-foreground tracking-tight">
+                    Forgot password?
+                  </h2>
+                  <p className="text-xs text-muted-foreground mt-1 font-medium">
+                    Enter your email address and we'll send you a 6-digit OTP code to reset your password.
+                  </p>
+                </div>
 
-          {/* Submit/Sign In Button */}
-          <div className="mt-8 flex flex-col gap-4">
-            <Button 
-              type="submit"
-              disabled={loading}
-              className="rounded-none py-6 font-extrabold uppercase tracking-widest text-primary-foreground bg-primary hover:bg-primary/95 flex items-center justify-center gap-2 text-xs w-full cursor-pointer shadow-md shadow-primary/25 border border-primary/10"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin text-primary-foreground" />
-                  SIGNING IN...
-                </>
-              ) : (
-                "SIGN IN"
-              )}
-            </Button>
-            
-            <div className="text-center text-xs text-muted-foreground">
-              Don&apos;t have an account?{" "}
-              <button 
-                type="button" 
-                onClick={() => navigate("/signup")} 
-                className="font-bold text-primary hover:underline cursor-pointer"
-              >
-                Create account
-              </button>
-            </div>
-          </div>
+                {/* Email Input */}
+                <div className="flex flex-col gap-1">
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <input 
+                      type="email"
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                      placeholder="Email Address"
+                      className="w-full rounded-none border border-border bg-muted/40 py-3 pl-12 pr-4 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 focus:border-primary"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <div className="mt-8 flex flex-col gap-4">
+                <Button 
+                  type="submit"
+                  disabled={loading}
+                  className="rounded-none py-6 font-extrabold uppercase tracking-widest text-primary-foreground bg-primary hover:bg-primary/95 flex items-center justify-center gap-2 text-xs w-full cursor-pointer shadow-md shadow-primary/25 border border-primary/10"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin text-primary-foreground" />
+                      SENDING OTP...
+                    </>
+                  ) : (
+                    "SEND OTP"
+                  )}
+                </Button>
+              </div>
+            </>
+          )}
+
+          {flow === "verify" && (
+            <>
+              {/* Input details & Form Fields */}
+              <div className="flex flex-col gap-5">
+                {/* Title Block */}
+                <div className="mb-2">
+                  <button 
+                    type="button" 
+                    onClick={() => setFlow("forgot")} 
+                    className="flex items-center gap-1 text-xs font-bold text-muted-foreground hover:text-foreground mb-4 transition-colors"
+                  >
+                    <ArrowLeft className="h-4 w-4" /> Back to Email
+                  </button>
+                  <h2 className="text-2xl font-semibold text-foreground tracking-tight">
+                    Verify OTP
+                  </h2>
+                  <p className="text-xs text-muted-foreground mt-1 font-medium">
+                    We've sent a 6-digit code to <span className="font-bold text-foreground">{resetEmail}</span>. Please enter it below.
+                  </p>
+                </div>
+
+                {/* OTP Input */}
+                <div className="flex flex-col gap-1">
+                  <div className="relative">
+                    <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <input 
+                      type="text"
+                      maxLength={6}
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                      placeholder="Enter 6-digit OTP"
+                      className="w-full rounded-none border border-border bg-muted/40 py-3 pl-12 pr-4 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 focus:border-primary tracking-widest font-black text-center text-lg"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <div className="mt-8 flex flex-col gap-4">
+                <Button 
+                  type="submit"
+                  disabled={loading}
+                  className="rounded-none py-6 font-extrabold uppercase tracking-widest text-primary-foreground bg-primary hover:bg-primary/95 flex items-center justify-center gap-2 text-xs w-full cursor-pointer shadow-md shadow-primary/25 border border-primary/10"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin text-primary-foreground" />
+                      VERIFYING OTP...
+                    </>
+                  ) : (
+                    "VERIFY OTP"
+                  )}
+                </Button>
+              </div>
+            </>
+          )}
+
+          {flow === "reset" && (
+            <>
+              {/* Input details & Form Fields */}
+              <div className="flex flex-col gap-5">
+                {/* Title Block */}
+                <div className="mb-2">
+                  <h2 className="text-2xl font-semibold text-foreground tracking-tight">
+                    Reset Password
+                  </h2>
+                  <p className="text-xs text-muted-foreground mt-1 font-medium">
+                    Enter your new password below.
+                  </p>
+                </div>
+
+                {/* New Password Input */}
+                <div className="flex flex-col gap-1">
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <input 
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="New Password"
+                      className="w-full rounded-none border border-border bg-muted/40 py-3 pl-12 pr-4 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 focus:border-primary"
+                    />
+                  </div>
+                </div>
+
+                {/* Confirm Password Input */}
+                <div className="flex flex-col gap-1">
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <input 
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm New Password"
+                      className="w-full rounded-none border border-border bg-muted/40 py-3 pl-12 pr-4 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 focus:border-primary"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <div className="mt-8 flex flex-col gap-4">
+                <Button 
+                  type="submit"
+                  disabled={loading}
+                  className="rounded-none py-6 font-extrabold uppercase tracking-widest text-primary-foreground bg-primary hover:bg-primary/95 flex items-center justify-center gap-2 text-xs w-full cursor-pointer shadow-md shadow-primary/25 border border-primary/10"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin text-primary-foreground" />
+                      RESETTING PASSWORD...
+                    </>
+                  ) : (
+                    "RESET PASSWORD"
+                  )}
+                </Button>
+              </div>
+            </>
+          )}
 
         </form>
 
