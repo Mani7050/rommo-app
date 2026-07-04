@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { API_BASE_URL } from "../config"
 import { Lock, Eye, EyeOff, Loader2, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useApp } from "../context/AppContext"
@@ -40,7 +41,7 @@ export default function SignInPage() {
 
     setLoading(true)
     try {
-      const res = await fetch("/api/auth/signin", {
+      const res = await fetch(`${API_BASE_URL}/api/auth/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

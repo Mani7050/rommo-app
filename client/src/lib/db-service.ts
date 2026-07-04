@@ -1,3 +1,5 @@
+import { API_BASE_URL } from "../config"
+
 // Initial seed data
 const DEFAULT_WORKSPACES = [
   { id: "d1", title: "Luxury Penthouse Suite", location: "Lavelle Road, Bangalore", price: 5499, image: "/comfort_room.png", rating: 4.9, type: "Suite", reviews: 48, status: "Available" },
@@ -10,7 +12,7 @@ const DEFAULT_WORKSPACES = [
 // 1. WORKSPACES
 export async function getWorkspaces(): Promise<any[]> {
   try {
-    const res = await fetch("/api/workspaces")
+    const res = await fetch(`${API_BASE_URL}/api/workspaces`)
     if (res.ok) {
       return await res.json()
     }
@@ -29,7 +31,7 @@ export async function getWorkspaces(): Promise<any[]> {
 
 export async function saveWorkspaces(list: any[]): Promise<void> {
   try {
-    const res = await fetch("/api/workspaces", {
+    const res = await fetch(`${API_BASE_URL}/api/workspaces`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -47,7 +49,7 @@ export async function saveWorkspaces(list: any[]): Promise<void> {
 
 export async function saveWorkspaceSingle(workspace: any): Promise<void> {
   try {
-    const res = await fetch("/api/workspaces/single", {
+    const res = await fetch(`${API_BASE_URL}/api/workspaces/single`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
