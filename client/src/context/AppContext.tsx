@@ -15,7 +15,7 @@ interface AppContextType {
   handleCopyCoupon: (code: string) => void
   unreadCount: number
   isAuthenticated: boolean
-  login: () => void
+  login: (userData?: any) => void
   logout: () => void
   hasSeenOnboarding: boolean
   completeOnboarding: () => void
@@ -31,11 +31,19 @@ const AppContext = createContext<AppContextType | undefined>(undefined)
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [toast, setToast] = useState<{ message: string; visible: boolean }>({ message: "", visible: false })
   const [favorites, setFavorites] = useState<string[]>(["d3"])
-  const [user, setUser] = useState<UserProfile>({
-    name: "Mani Kumar",
-    email: "mani.kumar@rommo.in",
-    phone: "+91 98765 43210",
-    pin: "2468"
+  const [user, setUser] = useState<UserProfile>(() => {
+    const saved = localStorage.getItem("rommo_user")
+    if (saved) {
+      try {
+        return JSON.parse(saved)
+      } catch (e) {}
+    }
+    return {
+      name: "Mani Kumar",
+      email: "mani.kumar@rommo.in",
+      phone: "+91 98765 43210",
+      pin: "2468"
+    }
   })
   const [maintenanceRequests, setMaintenanceRequests] = useState<MaintenanceRequest[]>([
     {
@@ -159,13 +167,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   ])
 
-  const login = () => {
+  const login = (userData?: any) => {
     localStorage.setItem("rommo_auth", "true")
+    if (userData) {
+      localStorage.setItem("rommo_user", JSON.stringify(userData))
+      setUser(prev => ({
+        ...prev,
+        name: userData.name || prev.name,
+        email: userData.email || prev.email,
+        phone: userData.phone || prev.phone || "+91 98765 43210",
+        pin: userData.pin || prev.pin || "2468"
+      }))
+    }
     setIsAuthenticated(true)
   }
 
   const logout = () => {
     localStorage.removeItem("rommo_auth")
+    localStorage.removeItem("rommo_user")
     setIsAuthenticated(false)
     setHasSeenOnboarding(false)
   }

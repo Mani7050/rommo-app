@@ -43,7 +43,7 @@ export default function SignUpPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return
 
@@ -53,12 +53,28 @@ export default function SignUpPage() {
     }
 
     setLoading(true)
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name, email, password })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        login({ name, email })
+        triggerToast("Account created successfully!")
+        navigate("/home")
+      } else {
+        triggerToast(data.error || "Registration failed")
+      }
+    } catch (err) {
+      console.error(err)
+      triggerToast("Network error. Please try again.")
+    } finally {
       setLoading(false)
-      login()
-      triggerToast("Account created successfully!")
-      navigate("/home")
-    }, 1500)
+    }
   }
 
   return (

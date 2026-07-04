@@ -34,17 +34,33 @@ export default function SignInPage() {
     return Object.keys(tempErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return
 
     setLoading(true)
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        login(data.user)
+        triggerToast("Welcome back to Rommo!")
+        navigate("/home")
+      } else {
+        triggerToast(data.error || "Login failed")
+      }
+    } catch (err) {
+      console.error(err)
+      triggerToast("Network error. Please try again.")
+    } finally {
       setLoading(false)
-      login()
-      triggerToast("Welcome back to Rommo!")
-      navigate("/home")
-    }, 1500)
+    }
   }
 
 
