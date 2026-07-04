@@ -1,16 +1,3 @@
-import { doc, setDoc, collection, getDocs } from "firebase/firestore"
-import { db, firebaseConfig } from "./firebase"
-
-// Helper to check if Firebase is configured with real keys
-const isFirebaseConfigured = () => {
-  return (
-    firebaseConfig.projectId &&
-    firebaseConfig.projectId !== "dummy-project-id" &&
-    firebaseConfig.apiKey &&
-    firebaseConfig.apiKey !== "dummy-api-key-for-local-development"
-  )
-}
-
 // Initial seed data
 const DEFAULT_WORKSPACES = [
   { id: "d1", title: "Luxury Penthouse Suite", location: "Lavelle Road, Bangalore", price: 5499, image: "/comfort_room.png", rating: 4.9, type: "Suite", reviews: 48, status: "Available" },
@@ -22,15 +9,13 @@ const DEFAULT_WORKSPACES = [
 
 // 1. WORKSPACES
 export async function getWorkspaces(): Promise<any[]> {
-  if (isFirebaseConfigured()) {
-    try {
-      const snap = await getDocs(collection(db, "workspaces"))
-      if (!snap.empty) {
-        return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-      }
-    } catch (err) {
-      console.warn("Failed fetching workspaces from Firestore, falling back to local:", err)
+  try {
+    const res = await fetch("/api/workspaces")
+    if (res.ok) {
+      return await res.json()
     }
+  } catch (err) {
+    console.warn("Failed fetching workspaces from API, falling back to local:", err)
   }
 
   // Fallback to local storage
@@ -43,28 +28,37 @@ export async function getWorkspaces(): Promise<any[]> {
 }
 
 export async function saveWorkspaces(list: any[]): Promise<void> {
-  if (isFirebaseConfigured()) {
-    try {
-      // Sync each one to Firestore
-      for (const item of list) {
-        await setDoc(doc(db, "workspaces", item.id), item)
-      }
+  try {
+    const res = await fetch("/api/workspaces", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(list)
+    })
+    if (res.ok) {
       return
-    } catch (err) {
-      console.warn("Failed saving workspaces to Firestore, falling back to local:", err)
     }
+  } catch (err) {
+    console.warn("Failed saving workspaces to API, falling back to local:", err)
   }
   localStorage.setItem("rommo_workspaces", JSON.stringify(list))
 }
 
 export async function saveWorkspaceSingle(workspace: any): Promise<void> {
-  if (isFirebaseConfigured()) {
-    try {
-      await setDoc(doc(db, "workspaces", workspace.id), workspace)
+  try {
+    const res = await fetch("/api/workspaces/single", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(workspace)
+    })
+    if (res.ok) {
       return
-    } catch (err) {
-      console.warn("Failed saving workspace to Firestore, falling back to local:", err)
     }
+  } catch (err) {
+    console.warn("Failed saving workspace to API, falling back to local:", err)
   }
   const current = await getWorkspaces()
   const idx = current.findIndex(w => w.id === workspace.id)

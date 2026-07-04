@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local database / generated data
+server/workspaces.json
+
+# Environment variables
+.env
+.env.*
