@@ -30,69 +30,18 @@ transporter.verify((error, success) => {
   }
 })
 
-// Generic function to send email via Resend (HTTP) or Nodemailer (SMTP)
-const sendMailHelper = async ({ to, subject, html, text }) => {
-  const resendKey = process.env.RESEND_API_KEY;
-  
-  if (resendKey) {
-    // Send via Resend API (HTTP POST)
-    const fromEmail = process.env.EMAIL_FROM || "onboarding@resend.dev";
-    try {
-      const response = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${resendKey}`
-        },
-        body: JSON.stringify({
-          from: fromEmail,
-          to: [to],
-          subject: subject,
-          html: html,
-          text: text
-        })
-      });
-      
-      const result = await response.json();
-      if (response.ok) {
-        console.log(`Email successfully sent to ${to} via Resend. ID: ${result.id}`);
-        return true;
-      } else {
-        console.error(`Resend API error sending to ${to}:`, result);
-        // Continue to SMTP fallback if Resend API call failed
-      }
-    } catch (err) {
-      console.error(`Resend fallback to SMTP for ${to} due to error:`, err.message);
-    }
-  }
-
-  // Fallback / Default: Nodemailer SMTP
+// Helper function to send welcome email
+const sendWelcomeEmail = async (email, name) => {
   if (!process.env.EMAIL_USER || process.env.EMAIL_USER.includes("your-email@gmail.com")) {
-    console.log(`Skipping Email to ${to} (SMTP credentials not configured)`);
-    return false;
+    console.log(`Skipping Welcome Email to ${email} (SMTP credentials not configured)`)
+    return
   }
 
   const mailOptions = {
     from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-    to: to,
-    subject: subject,
-    html: html,
-    text: text
-  };
-
-  try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`Email successfully sent to ${to} via SMTP. MessageId: ${info.messageId}`);
-    return true;
-  } catch (err) {
-    console.error(`Failed to send email to ${to} via SMTP:`, err.message);
-    return false;
-  }
-};
-
-// Helper function to send welcome email
-const sendWelcomeEmail = async (email, name) => {
-  const htmlContent = `
+    to: email,
+    subject: "Welcome to Rommo - Premium Workspaces!",
+    html: `
       <div style="background-color: #f6f9fc; padding: 40px 10px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
         <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); border: 1px solid #eef2f6;">
           
@@ -163,18 +112,29 @@ const sendWelcomeEmail = async (email, name) => {
 
         </div>
       </div>
-    `;
+    `
+  }
 
-  await sendMailHelper({
-    to: email,
-    subject: "Welcome to Rommo - Premium Workspaces!",
-    html: htmlContent
-  });
+  try {
+    const info = await transporter.sendMail(mailOptions)
+    console.log(`Welcome email successfully sent to ${email}. MessageId: ${info.messageId}`)
+  } catch (err) {
+    console.error(`Failed to send welcome email to ${email}:`, err.message)
+  }
 }
 
 // Helper function to send OTP email
 const sendOtpEmail = async (email, otp, name) => {
-  const htmlContent = `
+  if (!process.env.EMAIL_USER || process.env.EMAIL_USER.includes("your-email@gmail.com")) {
+    console.log(`Skiipping OTP Email to ${email} (SMTP credentials not configured)`)
+    return
+  }
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+    to: email,
+    subject: "Reset your Rommo Password",
+    html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 5px;">
         <div style="text-align: center; margin-bottom: 20px;">
           <h1 style="color: #f95716; margin: 0; font-size: 28px; letter-spacing: 2px;">ROMMO</h1>
@@ -201,13 +161,15 @@ const sendOtpEmail = async (email, otp, name) => {
           Koramangala, Bangalore, India.
         </p>
       </div>
-    `;
+    `
+  }
 
-  await sendMailHelper({
-    to: email,
-    subject: "Reset your Rommo Password",
-    html: htmlContent
-  });
+  try {
+    const info = await transporter.sendMail(mailOptions)
+    console.log(`OTP email successfully sent to ${email}. MessageId: ${info.messageId}`)
+  } catch (err) {
+    console.error(`Failed to send OTP email to ${email}:`, err.message)
+  }
 }
 
 const app = express()
