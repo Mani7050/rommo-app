@@ -81,7 +81,6 @@ export default function SignUpPage() {
   return (
     <div className="flex h-full w-full flex-col bg-muted/45 select-none animate-fadeIn transition-colors duration-300">
       
-      {/* Orange Header Section */}
       <div className="relative bg-primary px-6 pt-10 pb-28 flex flex-col justify-between w-full">
         <div className="max-w-md mx-auto w-full flex items-center justify-end">
           {/* Header Link */}
@@ -144,12 +143,21 @@ export default function SignUpPage() {
                     if (errors.email) setErrors(prev => ({ ...prev, email: undefined }))
                   }}
                   placeholder="Email Address"
-                  className={`w-full rounded-none border bg-muted/40 py-3 pl-12 pr-4 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
+                  className={`w-full rounded-none border bg-muted/40 py-3 pl-12 pr-10 text-sm text-foreground placeholder-muted-foreground/60 focus:bg-background focus:outline-hidden transition-all duration-200 ${
                     errors.email 
                       ? "border-destructive focus:border-destructive" 
-                      : "border-border focus:border-primary"
+                      : (/\S+@\S+\.\S+/.test(email) 
+                          ? "border-emerald-500 focus:border-emerald-500" 
+                          : "border-border focus:border-primary")
                   }`}
                 />
+                {/\S+@\S+\.\S+/.test(email) && (
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-emerald-500 text-white animate-fadeIn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-3 h-3">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                  </span>
+                )}
               </div>
               {errors.email && (
                 <span className="text-[10px] font-bold text-destructive px-1">{errors.email}</span>

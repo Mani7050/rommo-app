@@ -1,6 +1,5 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { Sparkles } from "lucide-react"
 import { useApp } from "../context/AppContext"
 
 export default function SplashPage() {
@@ -23,9 +22,9 @@ export default function SplashPage() {
     <div className="flex h-full w-full flex-col items-center justify-between bg-primary p-8 text-white select-none animate-fadeIn">
       <div className="flex-1 flex flex-col items-center justify-center gap-6">
         {/* Pulsing Modern Logo */}
-        <div className="relative flex h-20 w-20 items-center justify-center rounded-none bg-white shadow-xl shadow-white/10 animate-pulse">
-          <Sparkles className="h-10 w-10 text-primary" />
-          <div className="absolute -inset-1 rounded-none bg-white/20 blur-sm -z-10 animate-ping duration-1000"></div>
+        <div className="relative flex h-20 w-20 items-center justify-center bg-white shadow-xl shadow-white/10 animate-pulse p-3">
+          <img src="/rommologo.png" alt="Rommo Logo" className="h-full w-full object-contain" />
+          <div className="absolute -inset-1 bg-white/20 blur-sm -z-10 animate-ping duration-1000"></div>
         </div>
         
         {/* Brand details */}

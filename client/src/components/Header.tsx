@@ -25,14 +25,19 @@ export function Header({
   return (
     <div className="border-b border-zinc-100 dark:border-zinc-800/80 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md z-20 shrink-0 rounded-none w-full">
       <div className="max-w-3xl mx-auto w-full flex items-center justify-between px-4 py-2">
-        <div className="flex flex-col">
-          <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest leading-none">Welcome back</span>
-          <h1 className="text-lg font-extrabold tracking-tight text-foreground mt-0.5 leading-snug">
-            {currentNav === "home" && "Discover Space"}
-            {currentNav === "bookings" && "My Bookings"}
-            {currentNav === "favorites" && "Saved Spaces"}
-            {currentNav === "offers" && "Offers & Perks"}
-          </h1>
+        <div className="flex items-center gap-2.5">
+          <div className="h-9 w-9 bg-zinc-50 border border-zinc-100 dark:bg-zinc-800 dark:border-zinc-700 p-1.5 flex items-center justify-center shrink-0">
+            <img src="/rommologo.png" alt="Rommo Logo" className="h-full w-full object-contain" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest leading-none">Welcome back</span>
+            <h1 className="text-lg font-extrabold tracking-tight text-foreground mt-0.5 leading-snug">
+              {currentNav === "home" && "Discover Space"}
+              {currentNav === "bookings" && "My Bookings"}
+              {currentNav === "favorites" && "Saved Spaces"}
+              {currentNav === "offers" && "Offers & Perks"}
+            </h1>
+          </div>
         </div>
         <div className="relative">
           <button 
