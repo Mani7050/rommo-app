@@ -110,63 +110,58 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       wifiName: "ComfortRoom_Guest",
       wifiPassword: "comfortstay123",
       entryPin: "3184"
-    },
-    {
-      id: "b3",
-      title: "Meeting Room – 4 Seater",
-      location: "HSR Layout, Bangalore",
-      status: "PENDING",
-      checkInDate: "10 Jun, Mon",
-      checkInTime: "09:00 AM",
-      checkOutDate: "10 Jun, Mon",
-      checkOutTime: "11:00 AM",
-      guests: 4,
-      price: 799,
-      image: "/meeting_room.png",
-      bookingCode: "RM-MTG-0922",
-      wifiName: "HSR_Workspace_HighSpeed",
-      wifiPassword: "hsroffice2026",
-      entryPin: "0900"
-    },
-    {
-      id: "b4",
-      title: "Deluxe Suite Room",
-      location: "Whitefield, Bangalore",
-      status: "COMPLETED",
-      checkInDate: "12 Apr, Sun",
-      checkOutDate: "15 Apr, Wed",
-      guests: 2,
-      price: 4500,
-      image: "/urban_studio.png",
-      rating: 5,
-      bookingCode: "RM-DLX-9382"
-    },
-    {
-      id: "b5",
-      title: "Solo Work Pod",
-      location: "MG Road, Bangalore",
-      status: "COMPLETED",
-      checkInDate: "01 May, Fri",
-      checkOutDate: "01 May, Fri",
-      guests: 1,
-      price: 399,
-      image: "/meeting_room.png",
-      rating: 4,
-      bookingCode: "RM-POD-3301"
-    },
-    {
-      id: "b6",
-      title: "Conference Room B",
-      location: "Electronic City, Bangalore",
-      status: "CANCELLED",
-      checkInDate: "18 May, Mon",
-      checkOutDate: "18 May, Mon",
-      guests: 8,
-      price: 1200,
-      image: "/meeting_room.png",
-      bookingCode: "RM-CNF-4491"
     }
   ])
+
+  const fetchUserBookings = async (emailAddress: string) => {
+    try {
+      const res = await fetch(`/api/bookings?email=${encodeURIComponent(emailAddress)}`)
+      if (res.ok) {
+        const data = await res.json()
+        const bookingList = data.bookings || data
+        
+        const formatDateString = (dateStr: any) => {
+          try {
+            const date = new Date(dateStr)
+            if (isNaN(date.getTime())) return "N/A"
+            return date.toLocaleDateString("en-US", {
+              day: "2-digit",
+              month: "short",
+              weekday: "short"
+            })
+          } catch {
+            return "N/A"
+          }
+        }
+
+        const mapped: Booking[] = bookingList.map((b: any) => ({
+          id: b.id || b._id,
+          title: b.workspaceTitle,
+          location: b.workspaceLocation || "N/A",
+          status: (b.status || "PENDING").toUpperCase() as any,
+          checkInDate: formatDateString(b.startDate),
+          checkOutDate: formatDateString(b.endDate),
+          guests: b.guests || 1,
+          price: b.totalPrice || 0,
+          image: b.image || "/urban_studio.png",
+          bookingCode: b.bookingCode || `RM-${b.workspaceTitle.substring(0, 3).toUpperCase()}-${b.id.substring(Math.max(0, b.id.length - 4)).toUpperCase()}`,
+          wifiName: b.wifiName || "Rommo_WiFi",
+          wifiPassword: b.wifiPassword || "rommo123",
+          entryPin: b.entryPin || "1234"
+        }))
+        
+        setBookings(mapped)
+      }
+    } catch (err) {
+      console.warn("Failed fetching bookings from server:", err)
+    }
+  }
+
+  React.useEffect(() => {
+    if (isAuthenticated && user && user.email) {
+      fetchUserBookings(user.email)
+    }
+  }, [isAuthenticated, user?.email])
 
   const login = (userData?: any) => {
     localStorage.setItem("rommo_auth", "true")
@@ -211,12 +206,51 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }, 3000)
   }
 
-  const handleBookRoom = (room: { title: string; location: string; price: number; image: string }) => {
+  const handleBookRoom = async (room: { id?: string; title: string; location: string; price: number; image: string }) => {
+    const checkIn = new Date()
+    const checkOut = new Date()
+    checkOut.setDate(checkOut.getDate() + 1)
+
+    const payload = {
+      workspaceId: room.id || "d3",
+      workspaceTitle: room.title,
+      workspaceLocation: room.location,
+      name: user.name,
+      email: user.email,
+      phone: user.phone || "+91 98765 43210",
+      startDate: checkIn.toISOString(),
+      endDate: checkOut.toISOString(),
+      totalPrice: room.price,
+      paymentMethod: "Pay at Venue",
+      paymentStatus: "Pending",
+      status: "Pending"
+    }
+
+    try {
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      })
+
+      if (res.ok) {
+        triggerToast(`Successfully booked ${room.title}!`)
+        if (user && user.email) {
+          fetchUserBookings(user.email)
+        }
+        return
+      }
+    } catch (err) {
+      console.warn("Failed saving booking to API, falling back to local:", err)
+    }
+
     const newBooking: Booking = {
       id: `b-${Date.now()}`,
       title: room.title,
       location: room.location,
-      status: "CONFIRMED",
+      status: "PENDING",
       checkInDate: "28 Jun, Sun",
       checkOutDate: "29 Jun, Mon",
       guests: 2,
@@ -241,7 +275,26 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     ])
   }
 
-  const handleCancelBooking = (bookingId: string) => {
+  const handleCancelBooking = async (bookingId: string) => {
+    try {
+      const res = await fetch(`/api/bookings/${bookingId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ status: "Cancelled" })
+      })
+      if (res.ok) {
+        triggerToast("Booking successfully cancelled.")
+        if (user && user.email) {
+          fetchUserBookings(user.email)
+        }
+        return
+      }
+    } catch (err) {
+      console.warn("Failed cancelling booking on server:", err)
+    }
+
     setBookings(prev => 
       prev.map(b => b.id === bookingId ? { ...b, status: "CANCELLED" } : b)
     )

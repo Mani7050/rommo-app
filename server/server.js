@@ -198,10 +198,34 @@ const workspaceSchema = new mongoose.Schema({
   rating: { type: Number, required: true },
   type: { type: String, required: true },
   reviews: { type: Number, default: 0 },
-  status: { type: String, default: "Available" }
-})
+  status: { type: String, default: "Available" },
+  ownerEmail: { type: String },
+  approvalStatus: { type: String, default: "Approved" },
+  rejectionReason: { type: String }
+}, { timestamps: true })
 
 const Workspace = mongoose.model("Workspace", workspaceSchema)
+
+// Booking Schema
+const bookingSchema = new mongoose.Schema({
+  id: { type: String, required: true, unique: true },
+  workspaceId: { type: String, required: true },
+  workspaceTitle: { type: String, required: true },
+  workspaceLocation: { type: String },
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  phone: { type: String, required: true },
+  startDate: { type: Date, required: true },
+  endDate: { type: Date, required: true },
+  totalPrice: { type: Number, required: true },
+  paymentMethod: { type: String, default: 'Pay at Venue' },
+  paymentStatus: { type: String, default: 'Pending' },
+  sellerEmail: { type: String, default: '' },  // workspace owner's email
+  image: { type: String }, // workspace image
+  status: { type: String, default: 'Pending' }
+}, { timestamps: true })
+
+const Booking = mongoose.model("Booking", bookingSchema)
 
 // User Schema
 const userSchema = new mongoose.Schema({
@@ -535,6 +559,155 @@ app.post("/api/auth/update-pin", async (req, res) => {
   } catch (err) {
     console.error("Update pin error:", err)
     res.status(500).json({ error: "Failed to update security PIN" })
+  }
+})
+
+// Booking APIs
+
+// 1. Get all bookings for a user by email
+app.get("/api/bookings", async (req, res) => {
+  try {
+    const { email } = req.query
+    if (!email) {
+      return res.status(400).json({ error: "Email query parameter is required" })
+    }
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: "Database not connected" })
+    }
+    const bookings = await Booking.find({ email: email.toLowerCase() }).sort({ createdAt: -1 }).lean()
+    
+    // Fetch and attach workspace image dynamically if not already saved on the booking
+    const bookingsWithImages = await Promise.all(
+      bookings.map(async (b) => {
+        let image = b.image
+        if (!image) {
+          try {
+            const workspace = await Workspace.findOne({ 
+              $or: [
+                { id: b.workspaceId }, 
+                { title: b.workspaceTitle }
+              ] 
+            })
+            if (workspace) {
+              image = workspace.image
+            }
+          } catch (err) {
+            console.warn(`Could not lookup workspace image for ${b.workspaceTitle}:`, err.message)
+          }
+        }
+        return {
+          ...b,
+          image
+        }
+      })
+    )
+
+    res.json(bookingsWithImages)
+  } catch (err) {
+    console.error("Fetch bookings error:", err)
+    res.status(500).json({ error: "Failed to fetch bookings" })
+  }
+})
+
+// 2. Create a new booking
+app.post("/api/bookings", async (req, res) => {
+  try {
+    const { workspaceId, workspaceTitle, workspaceLocation, name, email, phone, startDate, endDate, totalPrice, paymentMethod, paymentStatus } = req.body
+
+    if (!workspaceId || !workspaceTitle || !name || !email || !phone || !startDate || !endDate || totalPrice === undefined) {
+      return res.status(400).json({ error: "All booking fields are required" })
+    }
+
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: "Database not connected" })
+    }
+
+    // Lookup workspace to get seller's ownerEmail and image if available
+    let sellerEmail = ""
+    let workspaceImage = ""
+    try {
+      const workspace = await Workspace.findOne({ 
+        $or: [
+          { id: workspaceId }, 
+          { _id: workspaceId },
+          { title: workspaceTitle }
+        ] 
+      })
+      if (workspace) {
+        if (workspace.ownerEmail) {
+          sellerEmail = workspace.ownerEmail.toLowerCase()
+        }
+        if (workspace.image) {
+          workspaceImage = workspace.image
+        }
+      }
+    } catch (wsErr) {
+      console.warn("Could not fetch workspace details:", wsErr.message)
+    }
+
+    const payload = {
+      id: `bk-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+      workspaceId,
+      workspaceTitle,
+      workspaceLocation,
+      name,
+      email: email.toLowerCase(),
+      phone,
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+      totalPrice,
+      paymentMethod: paymentMethod || "Pay at Venue",
+      paymentStatus: paymentStatus || "Pending",
+      sellerEmail,
+      image: workspaceImage,
+      status: "Pending"
+    }
+
+    const newBooking = new Booking(payload)
+    await newBooking.save()
+
+    res.status(201).json(newBooking)
+  } catch (err) {
+    console.error("Create booking error:", err)
+    res.status(500).json({ error: "Failed to process booking request" })
+  }
+})
+
+// 3. Update booking (specifically status/cancellation)
+app.put("/api/bookings/:id", async (req, res) => {
+  try {
+    const bookingId = req.params.id
+    const { status } = req.body
+
+    if (!status) {
+      return res.status(400).json({ error: "Status is required" })
+    }
+
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: "Database not connected" })
+    }
+
+    let booking = await Booking.findOne({ id: bookingId })
+    if (!booking) {
+      if (mongoose.Types.ObjectId.isValid(bookingId)) {
+        booking = await Booking.findById(bookingId)
+      }
+    }
+
+    if (!booking) {
+      return res.status(404).json({ error: "Booking not found" })
+    }
+
+    booking.status = status
+    if (status.toLowerCase() === "cancelled") {
+      booking.paymentStatus = "Refunded"
+    }
+    await booking.save()
+
+    res.json(booking)
+  } catch (err) {
+    console.error("Update booking error:", err)
+    res.status(500).json({ error: "Failed to update booking" })
   }
 })
 

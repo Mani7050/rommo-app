@@ -39,6 +39,17 @@ export function BookingDetailsDrawer({
           </button>
         </div>
 
+        {/* Hero Gallery Image */}
+        {selectedBooking.image && (
+          <div className="relative h-44 w-full overflow-hidden mb-4 bg-zinc-100 dark:bg-zinc-850">
+            <img 
+              src={selectedBooking.image} 
+              alt={selectedBooking.title}
+              className="h-full w-full object-cover"
+            />
+          </div>
+        )}
+
         <div className="flex flex-col gap-4 text-sm">
           {/* Details list */}
           <div className="flex flex-col gap-2.5">
