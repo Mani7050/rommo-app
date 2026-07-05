@@ -10,6 +10,7 @@ import MaintenanceCleaningDrawer from "../components/MaintenanceCleaningDrawer"
 import AccountSettingsDrawer from "../components/AccountSettingsDrawer"
 import SecurityPinDrawer from "../components/SecurityPinDrawer"
 import HelpSupportDrawer from "../components/HelpSupportDrawer"
+import FAQDrawer from "../components/FAQDrawer"
 import { useApp } from "../context/AppContext"
 import type { Booking, Offer } from "../types"
 
@@ -60,6 +61,7 @@ export default function DashboardLayout() {
   const [showAccountSettings, setShowAccountSettings] = useState(false)
   const [showSecurityPin, setShowSecurityPin] = useState(false)
   const [showHelpSupport, setShowHelpSupport] = useState(false)
+  const [showFAQ, setShowFAQ] = useState(false)
 
   // Available loyalty offers
   const offers: Offer[] = [
@@ -92,7 +94,8 @@ export default function DashboardLayout() {
             setShowMaintenance,
             setShowAccountSettings,
             setShowSecurityPin,
-            setShowHelpSupport
+            setShowHelpSupport,
+            setShowFAQ
           }} />
         </div>
       </div>
@@ -162,6 +165,12 @@ export default function DashboardLayout() {
       <HelpSupportDrawer 
         isOpen={showHelpSupport}
         onClose={() => setShowHelpSupport(false)}
+      />
+
+      {/* FAQ DRAWER */}
+      <FAQDrawer 
+        isOpen={showFAQ}
+        onClose={() => setShowFAQ(false)}
       />
     </>
   )

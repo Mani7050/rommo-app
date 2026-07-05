@@ -1,4 +1,4 @@
-import { Award, Moon, Sun, Settings, ShieldCheck, LogOut, ChevronRight, Wrench, HelpCircle, Coins, Calendar } from "lucide-react"
+import { Award, Moon, Sun, Settings, ShieldCheck, LogOut, ChevronRight, Wrench, HelpCircle, Coins, Calendar, MessageSquare } from "lucide-react"
 import { useNavigate, useOutletContext } from "react-router-dom"
 import { useTheme } from "@/components/theme-provider"
 import { useApp } from "../context/AppContext"
@@ -6,7 +6,7 @@ import { useApp } from "../context/AppContext"
 export default function ProfilePage() {
   const { theme, setTheme } = useTheme()
   const { bookings, triggerToast, logout, user } = useApp()
-  const { setShowMaintenance, setShowAccountSettings, setShowSecurityPin, setShowHelpSupport } = useOutletContext<any>()
+  const { setShowMaintenance, setShowAccountSettings, setShowSecurityPin, setShowHelpSupport, setShowFAQ } = useOutletContext<any>()
   const navigate = useNavigate()
 
   return (
@@ -122,8 +122,20 @@ export default function ProfilePage() {
           className="flex items-center justify-between bg-zinc-50/50 border border-zinc-100 rounded-none px-4 py-3.5 text-sm font-semibold text-foreground dark:bg-zinc-800/30 dark:border-zinc-850 cursor-pointer"
         >
           <div className="flex items-center gap-3">
-            <HelpCircle className="h-4.5 w-4.5 text-zinc-400" />
+            <MessageSquare className="h-4.5 w-4.5 text-zinc-400" />
             <span>Help & Support</span>
+          </div>
+          <ChevronRight className="h-4 w-4 text-zinc-400" />
+        </button>
+
+        <button 
+          type="button"
+          onClick={() => setShowFAQ(true)}
+          className="flex items-center justify-between bg-zinc-50/50 border border-zinc-100 rounded-none px-4 py-3.5 text-sm font-semibold text-foreground dark:bg-zinc-800/30 dark:border-zinc-850 cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <HelpCircle className="h-4.5 w-4.5 text-zinc-400" />
+            <span>FAQs</span>
           </div>
           <ChevronRight className="h-4 w-4 text-zinc-400" />
         </button>
