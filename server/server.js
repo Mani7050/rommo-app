@@ -213,7 +213,9 @@ const userSchema = new mongoose.Schema({
   address: { type: String, default: "" },
   createdAt: { type: Date, default: Date.now },
   resetOtp: { type: String },
-  resetOtpExpires: { type: Date }
+  resetOtpExpires: { type: Date },
+  lastLogin: { type: Date, default: null },
+  loginSource: { type: String, default: "—" }
 })
 
 const User = mongoose.model("User", userSchema)
@@ -308,7 +310,12 @@ app.post("/api/auth/signin", async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password" })
     }
 
-    res.json({ message: "Login successful", user: { name: user.name, email: user.email, phone: user.phone || "", pin: user.pin || "2468", address: user.address || "" } })
+    // Update lastLogin and loginSource
+    user.lastLogin = new Date()
+    user.loginSource = "app"
+    await user.save()
+
+    res.json({ message: "Login successful", user: { name: user.name, email: user.email, phone: user.phone || "", pin: user.pin || "2468", address: user.address || "", lastLogin: user.lastLogin, loginSource: user.loginSource } })
   } catch (err) {
     console.error("Signin error:", err)
     res.status(500).json({ error: "Failed to sign in" })
