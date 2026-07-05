@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from "react"
 import type { Booking, Notification, MaintenanceRequest, UserProfile } from "../types"
+import { API_BASE_URL } from "../config"
 
 interface AppContextType {
   bookings: Booking[]
@@ -115,7 +116,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUserBookings = async (emailAddress: string) => {
     try {
-      const res = await fetch(`/api/bookings?email=${encodeURIComponent(emailAddress)}`)
+      const res = await fetch(`${API_BASE_URL}/api/bookings?email=${encodeURIComponent(emailAddress)}`)
       if (res.ok) {
         const data = await res.json()
         const bookingList = data.bookings || data
@@ -227,7 +228,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const res = await fetch("/api/bookings", {
+      const res = await fetch(`${API_BASE_URL}/api/bookings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -277,7 +278,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const handleCancelBooking = async (bookingId: string) => {
     try {
-      const res = await fetch(`/api/bookings/${bookingId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/bookings/${bookingId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"

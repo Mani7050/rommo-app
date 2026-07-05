@@ -244,6 +244,20 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema)
 
+// Ticket Schema
+const ticketSchema = new mongoose.Schema({
+  id: { type: String, required: true, unique: true },
+  userName: { type: String, required: true },
+  userEmail: { type: String, required: true },
+  subject: { type: String, required: true },
+  description: { type: String, required: true },
+  priority: { type: String, default: "Medium" }, // Low, Medium, High
+  status: { type: String, default: "Open" } // Open, In Progress, Resolved
+}, { timestamps: true })
+
+const Ticket = mongoose.model("Ticket", ticketSchema)
+
+
 // Seed database helper
 const seedDatabase = async () => {
   try {
@@ -708,6 +722,55 @@ app.put("/api/bookings/:id", async (req, res) => {
   } catch (err) {
     console.error("Update booking error:", err)
     res.status(500).json({ error: "Failed to update booking" })
+  }
+})
+
+// Get support tickets for a user by email
+app.get("/api/tickets", async (req, res) => {
+  try {
+    const { email } = req.query
+    if (!email) {
+      return res.status(400).json({ error: "Email query parameter is required" })
+    }
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: "Database not connected" })
+    }
+    const tickets = await Ticket.find({ userEmail: email.toLowerCase() }).sort({ createdAt: -1 }).lean()
+    res.json(tickets)
+  } catch (err) {
+    console.error("Fetch tickets error:", err)
+    res.status(500).json({ error: "Failed to fetch support tickets" })
+  }
+})
+
+// Create a new support ticket
+app.post("/api/tickets", async (req, res) => {
+  try {
+    const { userName, userEmail, subject, description, priority } = req.body
+    if (!userName || !userEmail || !subject || !description) {
+      return res.status(400).json({ error: "Name, email, subject, and description are required" })
+    }
+
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: "Database not connected" })
+    }
+
+    const payload = {
+      id: `TKT-${Math.floor(1000 + Math.random() * 9000)}`,
+      userName,
+      userEmail: userEmail.toLowerCase(),
+      subject,
+      description,
+      priority: priority || "Medium",
+      status: "Open"
+    }
+
+    const newTicket = new Ticket(payload)
+    await newTicket.save()
+    res.status(201).json(newTicket)
+  } catch (err) {
+    console.error("Create ticket error:", err)
+    res.status(500).json({ error: "Failed to create support ticket" })
   }
 })
 
