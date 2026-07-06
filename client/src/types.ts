@@ -16,6 +16,12 @@ export interface Booking {
   wifiPassword?: string
   entryPin?: string
   type?: string
+  roomMood?: string
+  addOnServices?: { name: string; price: number }[]
+  splitPayments?: { email: string; amount: number; status: string }[]
+  smartCheckIn?: { checkedIn: boolean; checkInTime?: string; checkInMethod?: string }
+  roomUpgradeBid?: number
+  workspaceId?: string
 }
 
 export interface Offer {

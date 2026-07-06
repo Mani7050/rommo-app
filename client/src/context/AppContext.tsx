@@ -11,8 +11,9 @@ interface AppContextType {
   setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>
   triggerToast: (msg: string) => void
   toast: { message: string; visible: boolean }
-  handleBookRoom: (room: { title: string; location: string; price: number; image: string }) => void
+  handleBookRoom: (room: any) => void
   handleCancelBooking: (bookingId: string) => void
+  handleUpdateBooking: (bookingId: string, updates: Partial<Booking>) => Promise<void>
   handleCopyCoupon: (code: string) => void
   unreadCount: number
   isAuthenticated: boolean
@@ -148,7 +149,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           bookingCode: b.bookingCode || `RM-${b.workspaceTitle.substring(0, 3).toUpperCase()}-${b.id.substring(Math.max(0, b.id.length - 4)).toUpperCase()}`,
           wifiName: b.wifiName || "Rommo_WiFi",
           wifiPassword: b.wifiPassword || "rommo123",
-          entryPin: b.entryPin || "1234"
+          entryPin: b.entryPin || "1234",
+          roomMood: b.roomMood || "Standard",
+          addOnServices: b.addOnServices || [],
+          splitPayments: b.splitPayments || [],
+          smartCheckIn: b.smartCheckIn || { checkedIn: false, checkInTime: undefined, checkInMethod: "" },
+          roomUpgradeBid: b.roomUpgradeBid || 0,
+          workspaceId: b.workspaceId
         }))
         
         setBookings(mapped)
@@ -207,9 +214,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }, 3000)
   }
 
-  const handleBookRoom = async (room: { id?: string; title: string; location: string; price: number; image: string }) => {
+  const handleBookRoom = async (room: any) => {
     const checkIn = new Date()
-    const checkOut = new Date()
+    // Simple custom date mapping if checkInDate exists (e.g. "28 Jun, Sun")
+    if (room.checkInDate) {
+      try {
+        const parts = room.checkInDate.split(" ")
+        if (parts.length >= 2) {
+          const dayNum = parseInt(parts[0])
+          const monthMap: Record<string, number> = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 }
+          const monthStr = parts[1].replace(",", "")
+          const monthIdx = monthMap[monthStr] !== undefined ? monthMap[monthStr] : checkIn.getMonth()
+          checkIn.setDate(dayNum)
+          checkIn.setMonth(monthIdx)
+        }
+      } catch (e) {
+        console.warn("Date parsing fallback:", e)
+      }
+    }
+    const checkOut = new Date(checkIn)
     checkOut.setDate(checkOut.getDate() + 1)
 
     const payload = {
@@ -221,10 +244,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       phone: user.phone || "+91 98765 43210",
       startDate: checkIn.toISOString(),
       endDate: checkOut.toISOString(),
-      totalPrice: room.price,
+      totalPrice: room.price + (room.addOnServices || []).reduce((acc: number, curr: any) => acc + curr.price, 0),
       paymentMethod: "Pay at Venue",
       paymentStatus: "Pending",
-      status: "Pending"
+      status: "Pending",
+      roomMood: room.roomMood || "Standard",
+      addOnServices: room.addOnServices || [],
+      splitPayments: room.splitPayments || [],
+      smartCheckIn: { checkedIn: false, checkInTime: null, checkInMethod: "" },
+      roomUpgradeBid: 0
     }
 
     try {
@@ -252,15 +280,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       title: room.title,
       location: room.location,
       status: "PENDING",
-      checkInDate: "28 Jun, Sun",
+      checkInDate: room.checkInDate || "28 Jun, Sun",
       checkOutDate: "29 Jun, Mon",
-      guests: 2,
-      price: room.price,
+      guests: room.guests || 2,
+      price: payload.totalPrice,
       image: room.image,
       bookingCode: `RM-${room.title.substring(0, 3).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
       wifiName: `${room.title.replace(/\s+/g, "")}_WiFi`,
       wifiPassword: "welcomeguest12",
-      entryPin: Math.floor(1000 + Math.random() * 9000).toString()
+      entryPin: Math.floor(1000 + Math.random() * 9000).toString(),
+      roomMood: room.roomMood || "Standard",
+      addOnServices: room.addOnServices || [],
+      splitPayments: room.splitPayments || [],
+      smartCheckIn: { checkedIn: false, checkInTime: undefined, checkInMethod: "" },
+      roomUpgradeBid: 0
     }
     setBookings(prev => [newBooking, ...prev])
     triggerToast(`Successfully booked ${room.title}!`)
@@ -268,7 +301,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setNotifications(prev => [
       {
         id: Date.now(),
-        text: `New booking confirmed: ${room.title} for 28 Jun.`,
+        text: `New booking confirmed: ${room.title} for ${newBooking.checkInDate}.`,
         time: "Just now",
         read: false
       },
@@ -313,6 +346,30 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     ])
   }
 
+  const handleUpdateBooking = async (bookingId: string, updates: Partial<Booking>) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/bookings/${bookingId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(updates)
+      })
+      if (res.ok) {
+        if (user && user.email) {
+          fetchUserBookings(user.email)
+        }
+        return
+      }
+    } catch (err) {
+      console.warn("Failed updating booking on server:", err)
+    }
+
+    setBookings(prev => 
+      prev.map(b => b.id === bookingId ? { ...b, ...updates } : b)
+    )
+  }
+
   const handleCopyCoupon = (code: string) => {
     navigator.clipboard.writeText(code)
     triggerToast(`Coupon code "${code}" copied to clipboard!`)
@@ -343,6 +400,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       toast,
       handleBookRoom,
       handleCancelBooking,
+      handleUpdateBooking,
       handleCopyCoupon,
       unreadCount,
       isAuthenticated,

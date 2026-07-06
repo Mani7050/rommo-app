@@ -134,11 +134,12 @@ export default function DashboardLayout() {
       <WorkspaceDetailsDrawer 
         room={selectedRoom} 
         onClose={() => setSelectedRoom(null)} 
-        onBook={(room, guests, date) => {
+        onBook={(room, guests, date, preferences) => {
           handleBookRoom({
             ...room,
             guests,
-            checkInDate: date
+            checkInDate: date,
+            ...preferences
           })
         }}
       />
