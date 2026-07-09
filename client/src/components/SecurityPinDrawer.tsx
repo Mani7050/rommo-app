@@ -10,8 +10,6 @@ interface SecurityPinDrawerProps {
 }
 
 export default function SecurityPinDrawer({ isOpen, onClose }: SecurityPinDrawerProps) {
-  if (!isOpen) return null
-
   const { user, setUser, triggerToast } = useApp()
   
   const [newPin, setNewPin] = useState("")
@@ -19,6 +17,8 @@ export default function SecurityPinDrawer({ isOpen, onClose }: SecurityPinDrawer
   const [showPin, setShowPin] = useState(false)
   const [biometrics, setBiometrics] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+
+  if (!isOpen) return null
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

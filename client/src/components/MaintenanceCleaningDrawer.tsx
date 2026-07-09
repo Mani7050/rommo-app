@@ -9,8 +9,6 @@ interface MaintenanceCleaningDrawerProps {
 }
 
 export default function MaintenanceCleaningDrawer({ isOpen, onClose }: MaintenanceCleaningDrawerProps) {
-  if (!isOpen) return null
-
   const { bookings, maintenanceRequests, addMaintenanceRequest } = useApp()
   
   // Form states
@@ -18,6 +16,8 @@ export default function MaintenanceCleaningDrawer({ isOpen, onClose }: Maintenan
   const [requestType, setRequestType] = useState<"CLEANING" | "MAINTENANCE">("CLEANING")
   const [category, setCategory] = useState("Trash Removal")
   const [details, setDetails] = useState("")
+
+  if (!isOpen) return null
 
   const cleaningCategories = [
     "Trash Removal",

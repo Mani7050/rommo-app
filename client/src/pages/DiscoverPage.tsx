@@ -24,6 +24,8 @@ export default function DiscoverPage() {
     ambiance: "", // "quiet" | "city"
     sunlight: ""  // "morning" | "evening"
   })
+  const [isLoadingMatch, setIsLoadingMatch] = useState(false)
+
 
   useEffect(() => {
     getWorkspaces().then(setWorkspaces)
@@ -88,11 +90,12 @@ export default function DiscoverPage() {
   }
 
   // AI Matching Algorithm (Real API Call)
-  const runAiMatching = () => {
+  const runAiMatching = (answers = aiAnswers) => {
+    setIsLoadingMatch(true)
     fetch(`${API_BASE_URL}/api/rooms/match`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(aiAnswers)
+      body: JSON.stringify(answers)
     })
       .then((res) => {
         if (!res.ok) throw new Error("API error")
@@ -114,6 +117,9 @@ export default function DiscoverPage() {
       .catch((err) => {
         console.error("AI matching failed:", err)
         triggerToast("AI matching server is currently offline.")
+      })
+      .finally(() => {
+        setIsLoadingMatch(false)
       })
   }
 
@@ -286,168 +292,183 @@ export default function DiscoverPage() {
           <div className="bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-850 p-6 w-full max-w-sm relative rounded-[28px] shadow-2xl shadow-black/10 animate-scaleUp">
             
             {/* Close button */}
-            <button 
-              onClick={() => setShowAiMatch(false)}
-              className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-650 hover:bg-zinc-100 dark:hover:bg-zinc-900 p-1.5 rounded-full cursor-pointer transition-colors"
-            >
-              <X className="h-4.5 w-4.5" />
-            </button>
-
-            {/* Stepper progress indicator */}
-            <div className="flex justify-between items-center gap-1.5 mb-6 px-1">
-              {[1, 2, 3, 4].map((step) => (
-                <div 
-                  key={step}
-                  className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                    step <= aiStep ? "bg-primary" : "bg-zinc-100 dark:bg-zinc-800"
-                  }`}
-                />
-              ))}
-            </div>
-
-            {/* Wizard step contents */}
-            {aiStep === 1 && (
-              <div className="flex flex-col gap-4 animate-slideIn">
-                <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white uppercase tracking-wider leading-snug">Business Trip ya Family stay?</h3>
-                <p className="text-[10px] text-zinc-400 font-extrabold uppercase tracking-wider">Choose your stay purpose</p>
-                <div className="grid grid-cols-2 gap-3 mt-1">
-                  <button
-                    onClick={() => {
-                      setAiAnswers(prev => ({ ...prev, tripType: "business" }))
-                      setAiStep(2)
-                    }}
-                    className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
-                  >
-                    <span className="text-xl">💼</span>
-                    <span>Business Trip</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setAiAnswers(prev => ({ ...prev, tripType: "family" }))
-                      setAiStep(2)
-                    }}
-                    className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
-                  >
-                    <span className="text-xl">👨‍👩‍👧‍👦</span>
-                    <span>Family / Leisure</span>
-                  </button>
-                </div>
-              </div>
+            {!isLoadingMatch && (
+              <button 
+                onClick={() => setShowAiMatch(false)}
+                className="absolute top-4 right-4 text-zinc-450 hover:text-zinc-655 hover:bg-zinc-100 dark:hover:bg-zinc-900 p-1.5 rounded-full cursor-pointer transition-colors"
+              >
+                <X className="h-4.5 w-4.5" />
+              </button>
             )}
 
-            {aiStep === 2 && (
-              <div className="flex flex-col gap-4 animate-slideIn">
-                <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white uppercase tracking-wider leading-snug">What is your Budget?</h3>
-                <p className="text-[10px] text-zinc-400 font-extrabold uppercase tracking-wider">Select max price per night</p>
-                
-                <div className="flex flex-col gap-2 mt-2">
-                  <input 
-                    type="range"
-                    min="500"
-                    max="15000"
-                    step="500"
-                    value={aiAnswers.budget}
-                    onChange={(e) => setAiAnswers(prev => ({ ...prev, budget: parseInt(e.target.value) }))}
-                    className="w-full h-1 bg-zinc-200 rounded-lg appearance-none cursor-pointer dark:bg-zinc-800 accent-primary"
-                  />
-                  <div className="flex justify-between text-xs font-bold text-zinc-550 mt-1">
-                    <span>₹500</span>
-                    <span className="text-primary text-sm font-black">₹{aiAnswers.budget}</span>
-                    <span>₹15,000</span>
+            {isLoadingMatch ? (
+              <div className="flex flex-col items-center justify-center py-10 gap-4 animate-fadeIn text-center">
+                <div className="relative flex items-center justify-center h-16 w-16 mb-2">
+                  <div className="absolute inset-0 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+                  <Sparkles className="h-6 w-6 text-primary animate-pulse" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white uppercase tracking-wider">AI is Matching</h3>
+                  <p className="text-[10px] text-zinc-450 dark:text-zinc-500 font-extrabold uppercase tracking-wider mt-1.5 leading-relaxed">
+                    Analyzing premium workspaces in Bangalore...
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Stepper progress indicator */}
+                <div className="flex justify-between items-center gap-1.5 mb-6 px-1">
+                  {[1, 2, 3, 4].map((step) => (
+                    <div 
+                      key={step}
+                      className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                        step <= aiStep ? "bg-primary" : "bg-zinc-100 dark:bg-zinc-800"
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                {/* Wizard step contents */}
+                {aiStep === 1 && (
+                  <div className="flex flex-col gap-4 animate-slideIn">
+                    <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white uppercase tracking-wider leading-snug">Business Trip ya Family stay?</h3>
+                    <p className="text-[10px] text-zinc-400 font-extrabold uppercase tracking-wider">Choose your stay purpose</p>
+                    <div className="grid grid-cols-2 gap-3 mt-1">
+                      <button
+                        onClick={() => {
+                          setAiAnswers(prev => ({ ...prev, tripType: "business" }))
+                          setAiStep(2)
+                        }}
+                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
+                      >
+                        <span className="text-xl">💼</span>
+                        <span>Business Trip</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setAiAnswers(prev => ({ ...prev, tripType: "family" }))
+                          setAiStep(2)
+                        }}
+                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
+                      >
+                        <span className="text-xl">👨‍👩‍👧‍👦</span>
+                        <span>Family / Leisure</span>
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
 
-                <div className="flex gap-3 mt-4">
-                  <button
-                    onClick={() => setAiStep(1)}
-                    className="flex-1 py-2.5 border border-zinc-200 rounded-xl text-zinc-550 font-bold text-[10px] uppercase tracking-wider hover:bg-zinc-50 cursor-pointer transition-all active:scale-98"
-                  >
-                    Back
-                  </button>
-                  <button
-                    onClick={() => setAiStep(3)}
-                    className="flex-1 py-2.5 bg-primary text-white rounded-xl font-bold text-[10px] uppercase tracking-wider hover:bg-primary/95 cursor-pointer transition-all active:scale-98"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-            )}
+                {aiStep === 2 && (
+                  <div className="flex flex-col gap-4 animate-slideIn">
+                    <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white uppercase tracking-wider leading-snug">What is your Budget?</h3>
+                    <p className="text-[10px] text-zinc-400 font-extrabold uppercase tracking-wider">Select max price per night</p>
+                    
+                    <div className="flex flex-col gap-2 mt-2">
+                      <input 
+                        type="range"
+                        min="500"
+                        max="15000"
+                        step="500"
+                        value={aiAnswers.budget}
+                        onChange={(e) => setAiAnswers(prev => ({ ...prev, budget: parseInt(e.target.value) }))}
+                        className="w-full h-1 bg-zinc-200 rounded-lg appearance-none cursor-pointer dark:bg-zinc-800 accent-primary"
+                      />
+                      <div className="flex justify-between text-xs font-bold text-zinc-550 mt-1">
+                        <span>₹500</span>
+                        <span className="text-primary text-sm font-black">₹{aiAnswers.budget}</span>
+                        <span>₹15,000</span>
+                      </div>
+                    </div>
 
-            {aiStep === 3 && (
-              <div className="flex flex-col gap-4 animate-slideIn">
-                <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white uppercase tracking-wider leading-snug">Quiet room ya City View?</h3>
-                <p className="text-[10px] text-zinc-400 font-extrabold uppercase tracking-wider">Select room view preference</p>
-                <div className="grid grid-cols-2 gap-3 mt-1">
-                  <button
-                    onClick={() => {
-                      setAiAnswers(prev => ({ ...prev, ambiance: "quiet" }))
-                      setAiStep(4)
-                    }}
-                    className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
-                  >
-                    <span className="text-xl">🤫</span>
-                    <span>Quiet Workspace</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setAiAnswers(prev => ({ ...prev, ambiance: "city" }))
-                      setAiStep(4)
-                    }}
-                    className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
-                  >
-                    <span className="text-xl">🏙️</span>
-                    <span>Premium City View</span>
-                  </button>
-                </div>
-                <button
-                  onClick={() => setAiStep(2)}
-                  className="py-2.5 border border-zinc-200 rounded-xl text-zinc-555 font-bold text-[10px] uppercase tracking-wider hover:bg-zinc-50 cursor-pointer mt-2 transition-all active:scale-98"
-                >
-                  Back
-                </button>
-              </div>
-            )}
+                    <div className="flex gap-3 mt-4">
+                      <button
+                        onClick={() => setAiStep(1)}
+                        className="flex-1 py-2.5 border border-zinc-200 rounded-xl text-zinc-555 font-bold text-[10px] uppercase tracking-wider hover:bg-zinc-50 cursor-pointer transition-all active:scale-98"
+                      >
+                        Back
+                      </button>
+                      <button
+                        onClick={() => setAiStep(3)}
+                        className="flex-1 py-2.5 bg-primary text-white rounded-xl font-bold text-[10px] uppercase tracking-wider hover:bg-primary/95 cursor-pointer transition-all active:scale-98"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
 
-            {aiStep === 4 && (
-              <div className="flex flex-col gap-4 animate-slideIn">
-                <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white uppercase tracking-wider leading-snug">Morning sun ya Evening view?</h3>
-                <p className="text-[10px] text-zinc-400 font-extrabold uppercase tracking-wider">Select lighting direction preference</p>
-                <div className="grid grid-cols-2 gap-3 mt-1">
-                  <button
-                    onClick={() => {
-                      const updatedAnswers = { ...aiAnswers, sunlight: "morning" }
-                      setAiAnswers(updatedAnswers)
-                      setTimeout(() => {
-                        runAiMatching()
-                      }, 200)
-                    }}
-                    className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
-                  >
-                    <span className="text-xl">☀️</span>
-                    <span>Morning Sunlight</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      const updatedAnswers = { ...aiAnswers, sunlight: "evening" }
-                      setAiAnswers(updatedAnswers)
-                      setTimeout(() => {
-                        runAiMatching()
-                      }, 200)
-                    }}
-                    className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
-                  >
-                    <span className="text-xl">🌅</span>
-                    <span>Evening Sunset</span>
-                  </button>
-                </div>
-                <button
-                  onClick={() => setAiStep(3)}
-                  className="py-2.5 border border-zinc-200 rounded-xl text-zinc-555 font-bold text-[10px] uppercase tracking-wider hover:bg-zinc-50 cursor-pointer mt-2 transition-all active:scale-98"
-                >
-                  Back
-                </button>
-              </div>
+                {aiStep === 3 && (
+                  <div className="flex flex-col gap-4 animate-slideIn">
+                    <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white uppercase tracking-wider leading-snug">Quiet room ya City View?</h3>
+                    <p className="text-[10px] text-zinc-400 font-extrabold uppercase tracking-wider">Select room view preference</p>
+                    <div className="grid grid-cols-2 gap-3 mt-1">
+                      <button
+                        onClick={() => {
+                          setAiAnswers(prev => ({ ...prev, ambiance: "quiet" }))
+                          setAiStep(4)
+                        }}
+                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
+                      >
+                        <span className="text-xl">🤫</span>
+                        <span>Quiet Workspace</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setAiAnswers(prev => ({ ...prev, ambiance: "city" }))
+                          setAiStep(4)
+                        }}
+                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
+                      >
+                        <span className="text-xl">🏙️</span>
+                        <span>Premium City View</span>
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => setAiStep(2)}
+                      className="py-2.5 border border-zinc-200 rounded-xl text-zinc-555 font-bold text-[10px] uppercase tracking-wider hover:bg-zinc-50 cursor-pointer mt-2 transition-all active:scale-98"
+                    >
+                      Back
+                    </button>
+                  </div>
+                )}
+
+                {aiStep === 4 && (
+                  <div className="flex flex-col gap-4 animate-slideIn">
+                    <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white uppercase tracking-wider leading-snug">Morning sun ya Evening view?</h3>
+                    <p className="text-[10px] text-zinc-400 font-extrabold uppercase tracking-wider">Select lighting direction preference</p>
+                    <div className="grid grid-cols-2 gap-3 mt-1">
+                      <button
+                        onClick={() => {
+                          const updatedAnswers = { ...aiAnswers, sunlight: "morning" }
+                          setAiAnswers(updatedAnswers)
+                          runAiMatching(updatedAnswers)
+                        }}
+                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
+                      >
+                        <span className="text-xl">☀️</span>
+                        <span>Morning Sunlight</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          const updatedAnswers = { ...aiAnswers, sunlight: "evening" }
+                          setAiAnswers(updatedAnswers)
+                          runAiMatching(updatedAnswers)
+                        }}
+                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
+                      >
+                        <span className="text-xl">🌅</span>
+                        <span>Evening Sunset</span>
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => setAiStep(3)}
+                      className="py-2.5 border border-zinc-200 rounded-xl text-zinc-555 font-bold text-[10px] uppercase tracking-wider hover:bg-zinc-50 cursor-pointer mt-2 transition-all active:scale-98"
+                    >
+                      Back
+                    </button>
+                  </div>
+                )}
+              </>
             )}
 
           </div>

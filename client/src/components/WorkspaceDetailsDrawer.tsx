@@ -20,8 +20,6 @@ interface WorkspaceDetailsDrawerProps {
 }
 
 export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: WorkspaceDetailsDrawerProps) {
-  if (!room) return null
-
   const { triggerToast } = useApp()
   const [guests, setGuests] = useState(2)
   const [selectedDate, setSelectedDate] = useState("28 Jun, Sun")
@@ -69,6 +67,8 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
   const [isSplitActive, setIsSplitActive] = useState(false)
   const [friendEmail, setFriendEmail] = useState("")
   const [splitEmails, setSplitEmails] = useState<string[]>([])
+
+  if (!room) return null
 
   const handleAddSplitEmail = () => {
     if (friendEmail && friendEmail.includes("@")) {

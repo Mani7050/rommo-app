@@ -66,11 +66,11 @@ const FAQ_ITEMS: FAQItem[] = [
 ]
 
 export default function FAQDrawer({ isOpen, onClose }: FAQDrawerProps) {
-  if (!isOpen) return null
-
   const [searchQuery, setSearchQuery] = useState("")
   const [activeCategory, setActiveCategory] = useState<"all" | "bookings" | "payments" | "amenities" | "account">("all")
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
+
+  if (!isOpen) return null
 
   const toggleExpand = (idx: number) => {
     setExpandedIndex(expandedIndex === idx ? null : idx)

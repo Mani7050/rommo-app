@@ -10,24 +10,24 @@ interface AccountSettingsDrawerProps {
 }
 
 export default function AccountSettingsDrawer({ isOpen, onClose }: AccountSettingsDrawerProps) {
-  if (!isOpen) return null
-
   const { user, setUser, triggerToast } = useApp()
   
   // Form states initialized with context values
-  const [name, setName] = useState(user.name || "")
-  const [email, setEmail] = useState(user.email || "")
-  const [phone, setPhone] = useState(user.phone || "")
-  const [address, setAddress] = useState(user.address || "")
+  const [name, setName] = useState(user?.name || "")
+  const [email, setEmail] = useState(user?.email || "")
+  const [phone, setPhone] = useState(user?.phone || "")
+  const [address, setAddress] = useState(user?.address || "")
   const [isSaving, setIsSaving] = useState(false)
 
   // Reset form values if user context changes
   useEffect(() => {
-    setName(user.name || "")
-    setEmail(user.email || "")
-    setPhone(user.phone || "")
-    setAddress(user.address || "")
+    setName(user?.name || "")
+    setEmail(user?.email || "")
+    setPhone(user?.phone || "")
+    setAddress(user?.address || "")
   }, [user])
+
+  if (!isOpen) return null
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

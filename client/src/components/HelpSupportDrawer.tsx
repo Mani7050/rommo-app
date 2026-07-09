@@ -10,8 +10,6 @@ interface HelpSupportDrawerProps {
 }
 
 export default function HelpSupportDrawer({ isOpen, onClose }: HelpSupportDrawerProps) {
-  if (!isOpen) return null
-
   const { triggerToast, user } = useApp()
   const [ticketSubject, setTicketSubject] = useState("")
   const [ticketDescription, setTicketDescription] = useState("")
@@ -19,6 +17,8 @@ export default function HelpSupportDrawer({ isOpen, onClose }: HelpSupportDrawer
   const [activeTab, setActiveTab] = useState<"raise" | "history">("raise")
   const [tickets, setTickets] = useState<any[]>([])
   const [isLoadingTickets, setIsLoadingTickets] = useState(false)
+
+  if (!isOpen) return null
 
   const fetchTickets = async () => {
     if (!user?.email) return

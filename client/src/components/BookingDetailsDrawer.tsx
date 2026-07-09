@@ -18,8 +18,6 @@ export function BookingDetailsDrawer({
   setBookingToCancel,
   triggerToast
 }: BookingDetailsDrawerProps) {
-  if (!selectedBooking) return null
-
   const { handleUpdateBooking, handleBookRoom } = useApp()
 
   // Self Check-in states
@@ -30,6 +28,21 @@ export function BookingDetailsDrawer({
   // Camera Preview Stream for Face Check-In (Feature 13)
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null)
+
+  // SOS States
+  const [sosCountdown, setSosCountdown] = useState<number | null>(null)
+  const sosTimer = useRef<any>(null)
+
+  // Upgrade Auction bid value
+  const [bidValue, setBidValue] = useState(selectedBooking?.roomUpgradeBid || 0)
+
+  useEffect(() => {
+    if (selectedBooking) {
+      setBidValue(selectedBooking.roomUpgradeBid || 0)
+    }
+  }, [selectedBooking])
+
+  if (!selectedBooking) return null
 
   const startCamera = async () => {
     try {
@@ -51,13 +64,6 @@ export function BookingDetailsDrawer({
       setCameraStream(null)
     }
   }
-
-  // SOS States
-  const [sosCountdown, setSosCountdown] = useState<number | null>(null)
-  const sosTimer = useRef<any>(null)
-
-  // Upgrade Auction bid value
-  const [bidValue, setBidValue] = useState(selectedBooking.roomUpgradeBid || 0)
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
