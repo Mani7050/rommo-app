@@ -3,6 +3,7 @@ import { X, ShieldCheck, Copy, Map, AlertTriangle, RefreshCw, Key, Award, PhoneC
 import { Button } from "@/components/ui/button"
 import type { Booking } from "../types"
 import { useApp } from "../context/AppContext"
+import { API_BASE_URL } from "../config"
 
 interface BookingDetailsDrawerProps {
   selectedBooking: Booking | null
@@ -132,7 +133,7 @@ export function BookingDetailsDrawer({
           navigator.geolocation.getCurrentPosition(
             (position) => {
               const { latitude, longitude } = position.coords
-              fetch(`http://localhost:5000/api/bookings/${selectedBooking.id}/sos`, {
+              fetch(`${API_BASE_URL}/api/bookings/${selectedBooking.id}/sos`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ latitude, longitude, timestamp: new Date().toISOString() })
@@ -477,7 +478,7 @@ export function BookingDetailsDrawer({
                           <button
                             type="button"
                             onClick={() => {
-                              fetch(`http://localhost:5000/api/bookings/${selectedBooking.id}/split`, {
+                              fetch(`${API_BASE_URL}/api/bookings/${selectedBooking.id}/split`, {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify({ email: friendObj.email, status: "Paid" })

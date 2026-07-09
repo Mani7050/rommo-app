@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react"
 import { X, Star, MapPin, Wifi, Coffee, Users, Tv, Calendar, Plus, Minus, Check, Eye, Smile, Share2, Compass } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useApp } from "../context/AppContext"
+import { API_BASE_URL } from "../config"
 
 interface WorkspaceDetailsDrawerProps {
   room: {
@@ -38,7 +39,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
 
   useEffect(() => {
     if (room?.id) {
-      fetch(`http://localhost:5000/api/rooms/${room.id}/price-trend`)
+      fetch(`${API_BASE_URL}/api/rooms/${room.id}/price-trend`)
         .then(res => res.json())
         .then(data => setPriceTrend(data))
         .catch(err => console.error("Error loading price trends:", err))

@@ -3,6 +3,7 @@ import { useApp } from "../context/AppContext"
 import { useState, useEffect } from "react"
 import { useOutletContext } from "react-router-dom"
 import { getWorkspaces } from "../lib/db-service"
+import { API_BASE_URL } from "../config"
 
 export default function DiscoverPage() {
   const { favorites, toggleFavorite, triggerToast } = useApp()
@@ -88,7 +89,7 @@ export default function DiscoverPage() {
 
   // AI Matching Algorithm (Real API Call)
   const runAiMatching = () => {
-    fetch("http://localhost:5000/api/rooms/match", {
+    fetch(`${API_BASE_URL}/api/rooms/match`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(aiAnswers)
