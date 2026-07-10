@@ -1,4 +1,5 @@
 import { X, Copy } from "lucide-react"
+import { motion } from "framer-motion"
 import type { Offer } from "../types"
 
 interface OffersDrawerProps {
@@ -12,8 +13,25 @@ export function OffersDrawer({ showOffers, setShowOffers, offers, handleCopyCoup
   if (!showOffers) return null
 
   return (
-    <div className="fixed inset-0 z-50 bg-zinc-900/60 backdrop-blur-xs flex items-end animate-fadeIn rounded-none">
-      <div className="w-full bg-white rounded-t-[32px] rounded-b-none p-6 max-h-[85%] overflow-y-auto shadow-2xl dark:bg-zinc-900 animate-slideUp">
+    <div className="fixed inset-0 z-50 flex items-end justify-center rounded-none overflow-hidden">
+      {/* Backdrop */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="absolute inset-0 bg-zinc-900/60 backdrop-blur-xs" 
+        onClick={() => setShowOffers(false)}
+      />
+
+      {/* Drawer Sheet */}
+      <motion.div 
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ type: "spring", damping: 26, stiffness: 260 }}
+        className="relative z-10 w-full bg-white rounded-t-[32px] rounded-b-none p-6 max-h-[85%] overflow-y-auto shadow-2xl dark:bg-zinc-900"
+      >
         <div className="flex items-center justify-between border-b border-zinc-100 pb-4 mb-4 dark:border-zinc-800">
           <div>
             <span className="text-[10px] font-bold text-primary uppercase tracking-wider">Loyalty Rewards</span>
@@ -56,7 +74,7 @@ export function OffersDrawer({ showOffers, setShowOffers, offers, handleCopyCoup
             </div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }

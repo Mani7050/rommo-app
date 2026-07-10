@@ -3,6 +3,7 @@ import { X, Star, MapPin, Wifi, Coffee, Users, Tv, Calendar, Plus, Minus, Check,
 import { Button } from "@/components/ui/button"
 import { useApp } from "../context/AppContext"
 import { API_BASE_URL } from "../config"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface WorkspaceDetailsDrawerProps {
   room: {
@@ -141,12 +142,24 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-zinc-900/60 backdrop-blur-xs flex items-end animate-fadeIn rounded-none">
+    <div className="fixed inset-0 z-50 flex items-end justify-center rounded-none overflow-hidden">
       {/* Outer Click Closer */}
-      <div className="absolute inset-0 z-0" onClick={onClose}></div>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 z-0 bg-zinc-900/60 backdrop-blur-xs" 
+        onClick={onClose}
+      />
 
       {/* Drawer Sheet */}
-      <div className="relative z-10 w-full bg-white rounded-t-[32px] rounded-b-none p-6 max-h-[95%] overflow-y-auto shadow-2xl dark:bg-zinc-900 animate-slideUp">
+      <motion.div 
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        className="relative z-10 w-full bg-white rounded-t-[32px] rounded-b-none p-6 max-h-[95%] overflow-y-auto shadow-2xl dark:bg-zinc-900"
+      >
         
         {/* Header Section */}
         <div className="flex items-start justify-between gap-4 border-b border-zinc-100 pb-4 mb-4 dark:border-zinc-800">
@@ -484,135 +497,151 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
 
         </div>
 
-      </div>
+      </motion.div>
 
       {/* 360 VIRTUAL TOUR DIALOG OVERLAY (Feature 2) */}
-      {show360 && (
-        <div className="fixed inset-0 z-60 bg-zinc-950/95 flex flex-col items-center justify-center p-4 select-none">
-          <div className="relative w-full max-w-lg flex flex-col items-center text-center">
-            
-            {/* Header */}
-            <div className="flex justify-between w-full border-b border-zinc-800 pb-3 mb-6 items-center">
-              <div className="text-left">
-                <span className="text-[8px] font-bold text-primary uppercase tracking-widest">Interactive 360 View</span>
-                <h4 className="text-sm font-black text-white uppercase tracking-wider leading-snug">{room.title}</h4>
-              </div>
-              <button 
-                onClick={() => setShow360(false)}
-                className="rounded-full p-2 bg-zinc-800 text-zinc-400 hover:text-white cursor-pointer"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            {/* Draggable panorama screen */}
-            <div 
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUpOrLeave}
-              onMouseLeave={handleMouseUpOrLeave}
-              className="relative h-64 w-full overflow-hidden border border-zinc-800 cursor-grab active:cursor-grabbing bg-zinc-900"
+      <AnimatePresence>
+        {show360 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-60 bg-zinc-955/95 flex flex-col items-center justify-center p-4 select-none"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 220 }}
+              className="relative w-full max-w-lg flex flex-col items-center text-center"
             >
-              <img 
-                src={room.image} 
-                alt="360 Panorama" 
-                draggable={false}
-                style={{
-                  transform: `scale(2.2) translateX(${panOffset}px)`,
-                  transition: isDragging.current ? "none" : "transform 0.4s ease-out"
-                }}
-                className="h-full w-full object-cover select-none pointer-events-none"
-              />
               
-              {/* Floating parallax hotspots (3D coordinate illusion) */}
-              <button
-                type="button"
-                onClick={() => { setPerspective("bed"); setPanOffset(-120); }}
-                style={{ left: `calc(25% + ${panOffset * 1.5}px)` }}
-                className={`absolute top-[45%] -translate-y-1/2 z-10 h-7 w-7 rounded-full border border-white flex items-center justify-center text-white text-[10px] font-bold shadow-lg transition-transform hover:scale-110 active:scale-95 ${
-                  perspective === "bed" ? "bg-primary animate-ping" : "bg-primary/80"
-                }`}
-              >
-                🛏️
-              </button>
+              {/* Header */}
+              <div className="flex justify-between w-full border-b border-zinc-800 pb-3 mb-6 items-center">
+                <div className="text-left">
+                  <span className="text-[8px] font-bold text-primary uppercase tracking-widest">Interactive 360 View</span>
+                  <h4 className="text-sm font-black text-white uppercase tracking-wider leading-snug">{room.title}</h4>
+                </div>
+                <button 
+                  onClick={() => setShow360(false)}
+                  className="rounded-full p-2 bg-zinc-800 text-zinc-400 hover:text-white cursor-pointer"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
 
-              <button
-                type="button"
-                onClick={() => { setPerspective("work"); setPanOffset(0); }}
-                style={{ left: `calc(50% + ${panOffset * 1.5}px)` }}
-                className={`absolute top-[35%] -translate-y-1/2 z-10 h-7 w-7 rounded-full border border-white flex items-center justify-center text-white text-[10px] font-bold shadow-lg transition-transform hover:scale-110 active:scale-95 ${
-                  perspective === "work" ? "bg-blue-600 animate-ping" : "bg-blue-600/80"
-                }`}
+              {/* Draggable panorama screen */}
+              <div 
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUpOrLeave}
+                onMouseLeave={handleMouseUpOrLeave}
+                className="relative h-60 w-full overflow-hidden border border-zinc-800 cursor-grab active:cursor-grabbing bg-zinc-900 flex items-center justify-center"
               >
-                💻
-              </button>
+                <img 
+                  src={
+                    perspective === "bed" ? "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=800" :
+                    perspective === "washroom" ? "https://images.unsplash.com/photo-1552321554-5fecd8c78568?auto=format&fit=crop&q=80&w=800" :
+                    "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800"
+                  }
+                  alt="360 view"
+                  style={{
+                    transform: `scale(2.2) translateX(${panOffset}px)`,
+                    transition: isDragging.current ? "none" : "transform 0.4s ease-out"
+                  }}
+                  className="h-full w-full object-cover select-none pointer-events-none"
+                />
+                
+                {/* Floating parallax hotspots (3D coordinate illusion) */}
+                <button
+                  type="button"
+                  onClick={() => { setPerspective("bed"); setPanOffset(-120); }}
+                  style={{ left: `calc(25% + ${panOffset * 1.5}px)` }}
+                  className={`absolute top-[45%] -translate-y-1/2 z-10 h-7 w-7 rounded-full border border-white flex items-center justify-center text-white text-[10px] font-bold shadow-lg transition-transform hover:scale-110 active:scale-95 ${
+                    perspective === "bed" ? "bg-primary animate-ping" : "bg-primary/80"
+                  }`}
+                >
+                  🛏️
+                </button>
 
-              <button
-                type="button"
-                onClick={() => { setPerspective("washroom"); setPanOffset(120); }}
-                style={{ left: `calc(75% + ${panOffset * 1.5}px)` }}
-                className={`absolute top-[60%] -translate-y-1/2 z-10 h-7 w-7 rounded-full border border-white flex items-center justify-center text-white text-[10px] font-bold shadow-lg transition-transform hover:scale-110 active:scale-95 ${
-                  perspective === "washroom" ? "bg-emerald-600 animate-ping" : "bg-emerald-600/80"
-                }`}
-              >
-                🚿
-              </button>
+                <button
+                  type="button"
+                  onClick={() => { setPerspective("work"); setPanOffset(0); }}
+                  style={{ left: `calc(50% + ${panOffset * 1.5}px)` }}
+                  className={`absolute top-[35%] -translate-y-1/2 z-10 h-7 w-7 rounded-full border border-white flex items-center justify-center text-white text-[10px] font-bold shadow-lg transition-transform hover:scale-110 active:scale-95 ${
+                    perspective === "work" ? "bg-blue-600 animate-ping" : "bg-blue-600/80"
+                  }`}
+                >
+                  💻
+                </button>
 
-              {/* Overlay compass/guideline */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="h-10 w-10 rounded-full border-2 border-white/20 flex items-center justify-center">
-                  <Compass className="h-5 w-5 text-white/50 animate-spin" />
+                <button
+                  type="button"
+                  onClick={() => { setPerspective("washroom"); setPanOffset(120); }}
+                  style={{ left: `calc(75% + ${panOffset * 1.5}px)` }}
+                  className={`absolute top-[60%] -translate-y-1/2 z-10 h-7 w-7 rounded-full border border-white flex items-center justify-center text-white text-[10px] font-bold shadow-lg transition-transform hover:scale-110 active:scale-95 ${
+                    perspective === "washroom" ? "bg-emerald-600 animate-ping" : "bg-emerald-600/80"
+                  }`}
+                >
+                  🚿
+                </button>
+
+                {/* Overlay compass/guideline */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="h-10 w-10 rounded-full border-2 border-white/20 flex items-center justify-center">
+                    <Compass className="h-5 w-5 text-white/50 animate-spin" />
+                  </div>
+                </div>
+                
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/65 backdrop-blur-xs px-3.5 py-1 rounded-full text-[9px] font-bold text-white uppercase tracking-wider whitespace-nowrap">
+                  ↔ Drag left/right OR click hotspots to pan view
                 </div>
               </div>
-              
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/65 backdrop-blur-xs px-3.5 py-1 rounded-full text-[9px] font-bold text-white uppercase tracking-wider whitespace-nowrap">
-                ↔ Drag left/right OR click hotspots to pan view
-              </div>
-            </div>
 
-            {/* Clickable Hotspots selector (Feature 2) */}
-            <div className="grid grid-cols-3 gap-2 w-full mt-4 text-[9px] uppercase tracking-wider font-extrabold">
-              <button
-                type="button"
-                onClick={() => {
-                  setPerspective("bed")
-                  setPanOffset(-120)
-                }}
-                className={`p-2 border rounded-xl transition-all cursor-pointer ${
-                  perspective === "bed" ? "border-primary bg-primary/5 text-primary" : "border-zinc-850 bg-zinc-900/40 text-zinc-500 hover:border-zinc-700"
-                }`}
-              >
-                🛏️ King Bed Area
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setPerspective("work")
-                  setPanOffset(0)
-                }}
-                className={`p-2 border rounded-xl transition-all cursor-pointer ${
-                  perspective === "work" ? "border-primary bg-primary/5 text-primary" : "border-zinc-855 bg-zinc-900/40 text-zinc-500 hover:border-zinc-700"
-                }`}
-              >
-                💻 Work Desk Area
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setPerspective("washroom")
-                  setPanOffset(120)
-                }}
-                className={`p-2 border rounded-xl transition-all cursor-pointer ${
-                  perspective === "washroom" ? "border-primary bg-primary/5 text-primary" : "border-zinc-850 bg-zinc-900/40 text-zinc-500 hover:border-zinc-700"
-                }`}
-              >
-                🚿 Luxury Washroom
-              </button>
-            </div>
-            
-          </div>
-        </div>
-      )}
+              {/* Clickable Hotspots selector (Feature 2) */}
+              <div className="grid grid-cols-3 gap-2 w-full mt-4 text-[9px] uppercase tracking-wider font-extrabold">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPerspective("bed")
+                    setPanOffset(-120)
+                  }}
+                  className={`p-2 border rounded-xl transition-all cursor-pointer ${
+                    perspective === "bed" ? "border-primary bg-primary/5 text-primary" : "border-zinc-850 bg-zinc-900/40 text-zinc-500 hover:border-zinc-700"
+                  }`}
+                >
+                  🛏️ King Bed Area
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPerspective("work")
+                    setPanOffset(0)
+                  }}
+                  className={`p-2 border rounded-xl transition-all cursor-pointer ${
+                    perspective === "work" ? "border-primary bg-primary/5 text-primary" : "border-zinc-855 bg-zinc-900/40 text-zinc-500 hover:border-zinc-700"
+                  }`}
+                >
+                  💻 Work Desk Area
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPerspective("washroom")
+                    setPanOffset(120)
+                  }}
+                  className={`p-2 border rounded-xl transition-all cursor-pointer ${
+                    perspective === "washroom" ? "border-primary bg-primary/5 text-primary" : "border-zinc-850 bg-zinc-900/40 text-zinc-500 hover:border-zinc-700"
+                  }`}
+                >
+                  🚿 Luxury Washroom
+                </button>
+              </div>
+              
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   )

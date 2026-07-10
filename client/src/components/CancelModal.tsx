@@ -1,4 +1,5 @@
 import { AlertTriangle } from "lucide-react"
+import { motion } from "framer-motion"
 import type { Booking } from "../types"
 
 interface CancelModalProps {
@@ -11,8 +12,25 @@ export function CancelModal({ bookingToCancel, setBookingToCancel, handleCancelB
   if (!bookingToCancel) return null
 
   return (
-    <div className="absolute inset-0 z-50 bg-zinc-900/60 backdrop-blur-xs flex items-center justify-center p-6 animate-fadeIn rounded-none">
-      <div className="w-full bg-white rounded-none p-5 shadow-2xl dark:bg-zinc-900 max-w-[340px] animate-scaleUp">
+    <div className="absolute inset-0 z-50 flex items-center justify-center p-6 rounded-none overflow-hidden">
+      {/* Backdrop */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="absolute inset-0 bg-zinc-900/60 backdrop-blur-xs" 
+        onClick={() => setBookingToCancel(null)}
+      />
+
+      {/* Modal Card */}
+      <motion.div 
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        transition={{ type: "spring", damping: 25, stiffness: 350 }}
+        className="relative z-10 w-full bg-white rounded-none p-5 shadow-2xl dark:bg-zinc-900 max-w-[340px]"
+      >
         <div className="flex flex-col items-center text-center">
           <div className="rounded-none bg-red-50 p-3 text-red-600 dark:bg-red-950/30 dark:text-red-400 mb-3.5">
             <AlertTriangle className="h-6 w-6" />
@@ -37,7 +55,7 @@ export function CancelModal({ bookingToCancel, setBookingToCancel, handleCancelB
             Yes, Cancel
           </button>
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }

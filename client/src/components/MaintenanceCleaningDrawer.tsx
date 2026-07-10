@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { X, Wrench, Sparkles, AlertCircle, Clock, CheckCircle2, ChevronRight, CornerDownRight } from "lucide-react"
+import { motion } from "framer-motion"
 import { useApp } from "../context/AppContext"
 import { Button } from "@/components/ui/button"
 
@@ -82,12 +83,25 @@ export default function MaintenanceCleaningDrawer({ isOpen, onClose }: Maintenan
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-zinc-900/60 backdrop-blur-xs flex items-end animate-fadeIn rounded-none">
-      {/* Outer Click Closer */}
-      <div className="absolute inset-0 z-0" onClick={onClose}></div>
+    <div className="fixed inset-0 z-50 flex items-end justify-center rounded-none overflow-hidden">
+      {/* Backdrop */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="absolute inset-0 bg-zinc-900/60 backdrop-blur-xs" 
+        onClick={onClose}
+      />
 
       {/* Drawer Sheet */}
-      <div className="relative z-10 w-full bg-white rounded-t-[32px] rounded-b-none p-6 max-h-[92%] overflow-y-auto shadow-2xl dark:bg-zinc-900 animate-slideUp">
+      <motion.div 
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ type: "spring", damping: 26, stiffness: 260 }}
+        className="relative z-10 w-full bg-white rounded-t-[32px] rounded-b-none p-6 max-h-[92%] overflow-y-auto shadow-2xl dark:bg-zinc-900"
+      >
         
         {/* Header */}
         <div className="flex items-start justify-between border-b border-zinc-100 pb-4 mb-4 dark:border-zinc-800">
@@ -248,7 +262,7 @@ export default function MaintenanceCleaningDrawer({ isOpen, onClose }: Maintenan
 
         </div>
 
-      </div>
+      </motion.div>
     </div>
   )
 }

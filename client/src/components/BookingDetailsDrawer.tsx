@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { X, ShieldCheck, Copy, Map, AlertTriangle, RefreshCw, Key, Award, PhoneCall } from "lucide-react"
+import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import type { Booking } from "../types"
 import { useApp } from "../context/AppContext"
@@ -191,9 +192,25 @@ export function BookingDetailsDrawer({
   const currentMood = selectedBooking.roomMood || "Standard"
 
   return (
-    <div className="fixed inset-0 z-50 bg-zinc-900/60 backdrop-blur-xs flex items-end animate-fadeIn rounded-none">
+    <div className="fixed inset-0 z-50 flex items-end justify-center rounded-none overflow-hidden">
+      {/* Backdrop */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="absolute inset-0 bg-zinc-900/60 backdrop-blur-xs" 
+        onClick={() => setSelectedBooking(null)}
+      />
+
       {/* Sheet Content */}
-      <div className="w-full bg-white rounded-t-[32px] rounded-b-none p-6 max-h-[90%] overflow-y-auto shadow-2xl dark:bg-zinc-900 animate-slideUp">
+      <motion.div 
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ type: "spring", damping: 26, stiffness: 260 }}
+        className="w-full bg-white rounded-t-[32px] rounded-b-none p-6 max-h-[90%] overflow-y-auto shadow-2xl dark:bg-zinc-900"
+      >
         
         {/* Title/Header */}
         <div className="flex items-center justify-between border-b border-zinc-150 pb-4 mb-4 dark:border-zinc-800">
@@ -578,7 +595,7 @@ export function BookingDetailsDrawer({
 
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }

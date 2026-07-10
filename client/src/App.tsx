@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react"
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useNavigate } from "react-router-dom"
 import { Sparkles } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 // Providers
 import { AppProvider, useApp } from "./context/AppContext"
@@ -52,12 +53,20 @@ function AppContent() {
     <div className="relative flex h-dvh w-full flex-col overflow-hidden bg-white dark:bg-zinc-900 font-sans transition-colors duration-300">
       
       {/* Interactive Toast */}
-      {toast.visible && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-55 flex items-center gap-2 rounded-none bg-zinc-900 px-4 py-3 text-sm text-white shadow-xl animate-bounce dark:bg-zinc-100 dark:text-zinc-900">
-          <Sparkles className="h-4 w-4 text-primary" />
-          <span>{toast.message}</span>
-        </div>
-      )}
+      <AnimatePresence>
+        {toast.visible && (
+          <motion.div
+            initial={{ y: -50, x: "-50%", opacity: 0 }}
+            animate={{ y: 0, x: "-50%", opacity: 1 }}
+            exit={{ y: -50, x: "-50%", opacity: 0 }}
+            transition={{ type: "spring", damping: 15, stiffness: 220 }}
+            className="fixed top-6 left-1/2 z-55 flex items-center gap-2 rounded-none bg-zinc-900 px-4 py-3 text-sm text-white shadow-xl dark:bg-zinc-100 dark:text-zinc-900"
+          >
+            <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+            <span>{toast.message}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Routes>
         {/* Public Splash Route */}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { Outlet, useLocation, useNavigate } from "react-router-dom"
+import { AnimatePresence } from "framer-motion"
 import { Header } from "../components/Header"
 import { BottomNav } from "../components/BottomNav"
 import { BookingDetailsDrawer } from "../components/BookingDetailsDrawer"
@@ -108,71 +109,107 @@ export default function DashboardLayout() {
       />
 
       {/* DETAILS BOTTOM SHEET (View Details drawer) */}
-      <BookingDetailsDrawer 
-        selectedBooking={selectedBooking}
-        setSelectedBooking={setSelectedBooking}
-        setBookingToCancel={setBookingToCancel}
-        triggerToast={triggerToast}
-      />
+      <AnimatePresence>
+        {selectedBooking && (
+          <BookingDetailsDrawer 
+            selectedBooking={selectedBooking}
+            setSelectedBooking={setSelectedBooking}
+            setBookingToCancel={setBookingToCancel}
+            triggerToast={triggerToast}
+          />
+        )}
+      </AnimatePresence>
 
       {/* OFFERS DRAWER */}
-      <OffersDrawer 
-        showOffers={showOffers}
-        setShowOffers={setShowOffers}
-        offers={offers}
-        handleCopyCoupon={handleCopyCoupon}
-      />
+      <AnimatePresence>
+        {showOffers && (
+          <OffersDrawer 
+            showOffers={showOffers}
+            setShowOffers={setShowOffers}
+            offers={offers}
+            handleCopyCoupon={handleCopyCoupon}
+          />
+        )}
+      </AnimatePresence>
 
       {/* CANCELLATION MODAL */}
-      <CancelModal 
-        bookingToCancel={bookingToCancel}
-        setBookingToCancel={setBookingToCancel}
-        handleCancelBooking={handleCancelBooking}
-      />
+      <AnimatePresence>
+        {bookingToCancel && (
+          <CancelModal 
+            bookingToCancel={bookingToCancel}
+            setBookingToCancel={setBookingToCancel}
+            handleCancelBooking={handleCancelBooking}
+          />
+        )}
+      </AnimatePresence>
 
       {/* WORKSPACE/ROOM DETAIL DRAWER */}
-      <WorkspaceDetailsDrawer 
-        room={selectedRoom} 
-        onClose={() => setSelectedRoom(null)} 
-        onBook={(room, guests, date, preferences) => {
-          handleBookRoom({
-            ...room,
-            guests,
-            checkInDate: date,
-            ...preferences
-          })
-        }}
-      />
+      <AnimatePresence>
+        {selectedRoom && (
+          <WorkspaceDetailsDrawer 
+            room={selectedRoom} 
+            onClose={() => setSelectedRoom(null)} 
+            onBook={(room, guests, date, preferences) => {
+              handleBookRoom({
+                ...room,
+                guests,
+                checkInDate: date,
+                ...preferences
+              })
+            }}
+          />
+        )}
+      </AnimatePresence>
 
       {/* MAINTENANCE/CLEANING SERVICES DRAWER */}
-      <MaintenanceCleaningDrawer 
-        isOpen={showMaintenance}
-        onClose={() => setShowMaintenance(false)}
-      />
+      <AnimatePresence>
+        {showMaintenance && (
+          <MaintenanceCleaningDrawer 
+            isOpen={showMaintenance}
+            onClose={() => setShowMaintenance(false)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* ACCOUNT SETTINGS DRAWER */}
-      <AccountSettingsDrawer 
-        isOpen={showAccountSettings}
-        onClose={() => setShowAccountSettings(false)}
-      />
+      <AnimatePresence>
+        {showAccountSettings && (
+          <AccountSettingsDrawer 
+            isOpen={showAccountSettings}
+            onClose={() => setShowAccountSettings(false)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* SECURITY PIN DRAWER */}
-      <SecurityPinDrawer 
-        isOpen={showSecurityPin}
-        onClose={() => setShowSecurityPin(false)}
-      />
+      <AnimatePresence>
+        {showSecurityPin && (
+          <SecurityPinDrawer 
+            isOpen={showSecurityPin}
+            onClose={() => setShowSecurityPin(false)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* HELP & SUPPORT SERVICES DRAWER */}
-      <HelpSupportDrawer 
-        isOpen={showHelpSupport}
-        onClose={() => setShowHelpSupport(false)}
-      />
+      <AnimatePresence>
+        {showHelpSupport && (
+          <HelpSupportDrawer 
+            isOpen={showHelpSupport}
+            onClose={() => setShowHelpSupport(false)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* FAQ DRAWER */}
-      <FAQDrawer 
-        isOpen={showFAQ}
-        onClose={() => setShowFAQ(false)}
-      />
+      <AnimatePresence>
+        {showFAQ && (
+          <FAQDrawer 
+            isOpen={showFAQ}
+            onClose={() => setShowFAQ(false)}
+          />
+        )}
+      </AnimatePresence>
     </>
   )
 }
