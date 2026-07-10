@@ -1,5 +1,6 @@
 import type { Notification } from "../types"
-import { Bell } from "lucide-react"
+import { Bell, Trash2, CheckCheck } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface HeaderProps {
   currentNav: "home" | "bookings" | "favorites" | "offers" | "profile"
@@ -53,49 +54,74 @@ export function Header({
           </button>
 
           {/* Notifications Center Panel */}
-          {showNotifications && (
-            <div className="absolute right-0 mt-2 z-30 w-72 rounded-none border border-zinc-100 bg-white p-3 shadow-xl dark:border-zinc-800 dark:bg-zinc-805 animate-in fade-in-50 slide-in-from-top-3 duration-200">
-              <div className="flex items-center justify-between border-b border-zinc-100 pb-2 mb-2 dark:border-zinc-700">
-                <span className="font-bold text-sm text-foreground flex items-center gap-1.5">
-                  Notifications
-                  <span className="inline-block px-1.5 py-0.5 rounded-none bg-primary/10 text-primary text-[10px] font-bold">
-                    {unreadCount} new
+          <AnimatePresence>
+            {showNotifications && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
+                className="absolute right-0 mt-2 z-30 w-72 rounded-none border border-zinc-100 bg-white p-3 shadow-xl dark:border-zinc-800 dark:bg-zinc-900 origin-top-right"
+              >
+                <div className="flex items-center justify-between border-b border-zinc-100 pb-2 mb-2 dark:border-zinc-700">
+                  <span className="font-bold text-sm text-foreground flex items-center gap-1.5">
+                    Notifications
+                    <span className="inline-block px-1.5 py-0.5 rounded-none bg-primary/10 text-primary text-[10px] font-bold">
+                      {unreadCount} new
+                    </span>
                   </span>
-                </span>
-                {unreadCount > 0 && (
-                  <button 
-                    onClick={() => {
-                      setNotifications(prev => prev.map(item => ({ ...item, read: true })))
-                      triggerToast("All notifications marked as read.")
-                    }}
-                    className="text-[10px] font-bold text-primary hover:underline cursor-pointer"
-                  >
-                    Mark all read
-                  </button>
-                )}
-              </div>
-              <div className="flex flex-col gap-1.5 max-h-64 overflow-y-auto scrollbar-none">
-                {notifications.length === 0 ? (
-                  <div className="text-center py-6 text-xs text-muted-foreground">
-                    No new notifications
+                  <div className="flex items-center gap-2">
+                    {unreadCount > 0 && (
+                      <button 
+                        onClick={() => {
+                          setNotifications(prev => prev.map(item => ({ ...item, read: true })))
+                          triggerToast("All notifications marked as read.")
+                        }}
+                        className="text-[10px] font-bold text-primary hover:underline cursor-pointer flex items-center gap-0.5"
+                        title="Mark all read"
+                      >
+                        <CheckCheck className="h-3 w-3" />
+                        Mark read
+                      </button>
+                    )}
+                    {notifications.length > 0 && (
+                      <button 
+                        onClick={() => {
+                          setNotifications([])
+                          triggerToast("All notifications cleared.")
+                        }}
+                        className="text-[10px] font-bold text-red-500 hover:underline cursor-pointer flex items-center gap-0.5"
+                        title="Clear all"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                        Clear
+                      </button>
+                    )}
                   </div>
-                ) : (
-                  notifications.map((n) => (
-                    <div 
-                      key={n.id}
-                      onClick={() => {
-                        setNotifications(prev => prev.map(item => item.id === n.id ? { ...item, read: true } : item))
-                      }}
-                      className={`flex flex-col gap-0.5 rounded-none p-2.5 text-xs transition-colors cursor-pointer ${n.read ? "bg-transparent text-muted-foreground" : "bg-primary/5 text-foreground font-medium"}`}
-                    >
-                      <p className="leading-snug">{n.text}</p>
-                      <span className="text-[10px] text-zinc-400 mt-1 dark:text-zinc-500">{n.time}</span>
+                </div>
+                <div className="flex flex-col gap-1.5 max-h-64 overflow-y-auto scrollbar-none">
+                  {notifications.length === 0 ? (
+                    <div className="text-center py-6 text-xs text-muted-foreground">
+                      No new notifications
                     </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
+                  ) : (
+                    notifications.map((n) => (
+                      <div 
+                        key={n.id}
+                        onClick={() => {
+                          setNotifications(prev => prev.map(item => item.id === n.id ? { ...item, read: true } : item))
+                        }}
+                        className={`flex flex-col gap-0.5 rounded-none p-2.5 text-xs transition-colors cursor-pointer border-b border-zinc-50 dark:border-zinc-800 last:border-0 ${n.read ? "bg-transparent text-muted-foreground hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30" : "bg-primary/5 text-foreground font-medium hover:bg-primary/10"}`}
+                      >
+                        <p className="leading-snug">{n.text}</p>
+                        <span className="text-[10px] text-zinc-400 mt-1 dark:text-zinc-500">{n.time}</span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

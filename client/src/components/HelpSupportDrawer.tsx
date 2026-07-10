@@ -11,7 +11,7 @@ interface HelpSupportDrawerProps {
 }
 
 export default function HelpSupportDrawer({ isOpen, onClose }: HelpSupportDrawerProps) {
-  const { triggerToast, user } = useApp()
+  const { triggerToast, user, setNotifications } = useApp()
   const [ticketSubject, setTicketSubject] = useState("")
   const [ticketDescription, setTicketDescription] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -68,6 +68,15 @@ export default function HelpSupportDrawer({ isOpen, onClose }: HelpSupportDrawer
       if (res.ok) {
         const data = await res.json()
         triggerToast(`Support ticket raised successfully! Ticket ID: #${data.id}`)
+        setNotifications(prev => [
+          {
+            id: Date.now(),
+            text: `Support ticket raised: "${ticketSubject}" (ID: #${data.id}).`,
+            time: "Just now",
+            read: false
+          },
+          ...prev
+        ])
         setTicketSubject("")
         setTicketDescription("")
         fetchTickets()

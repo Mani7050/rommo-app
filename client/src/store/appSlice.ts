@@ -51,6 +51,20 @@ const getInitialAuth = (): boolean => {
   return localStorage.getItem("rommo_auth") === "true"
 }
 
+const getInitialNotifications = (): Notification[] => {
+  const saved = localStorage.getItem("rommo_notifications")
+  if (saved) {
+    try {
+      return JSON.parse(saved)
+    } catch (e) {}
+  }
+  return [
+    { id: 1, text: "Urban Studio Room booking is confirmed for tomorrow!", time: "2 hrs ago", read: false },
+    { id: 2, text: "Your booking for Meeting Room - 4 Seater is pending host approval.", time: "5 hrs ago", read: false },
+    { id: 3, text: "Welcome to Rommo! Complete your profile to get 500 bonus points.", time: "1 day ago", read: true }
+  ]
+}
+
 const initialState: AppState = {
   bookings: [
     {
@@ -85,11 +99,7 @@ const initialState: AppState = {
     }
   ],
   favorites: ["d3"],
-  notifications: [
-    { id: 1, text: "Urban Studio Room booking is confirmed for tomorrow!", time: "2 hrs ago", read: false },
-    { id: 2, text: "Your booking for Meeting Room - 4 Seater is pending host approval.", time: "5 hrs ago", read: false },
-    { id: 3, text: "Welcome to Rommo! Complete your profile to get 500 bonus points.", time: "1 day ago", read: true }
-  ],
+  notifications: getInitialNotifications(),
   maintenanceRequests: [
     {
       id: "req-1",
@@ -202,6 +212,12 @@ export const handleBookRoomThunk = createAsyncThunk(
 
       if (res.ok) {
         dispatch(triggerToast(`Successfully booked ${room.title}!`))
+        dispatch(addNotification({
+          id: Date.now(),
+          text: `New booking confirmed: ${room.title}.`,
+          time: "Just now",
+          read: false
+        }))
         if (state.app.user.email) {
           dispatch(fetchUserBookings(state.app.user.email))
         }
@@ -257,6 +273,13 @@ export const handleCancelBookingThunk = createAsyncThunk(
       })
       if (res.ok) {
         dispatch(triggerToast("Booking successfully cancelled."))
+        const booking = state.app.bookings.find(b => b.id === bookingId)
+        dispatch(addNotification({
+          id: Date.now(),
+          text: `You cancelled your booking for ${booking?.title || "workspace"}.`,
+          time: "Just now",
+          read: false
+        }))
         if (state.app.user.email) {
           dispatch(fetchUserBookings(state.app.user.email))
         }
@@ -350,9 +373,11 @@ const appSlice = createSlice({
     },
     setNotifications(state, action: PayloadAction<Notification[]>) {
       state.notifications = action.payload
+      localStorage.setItem("rommo_notifications", JSON.stringify(action.payload))
     },
     addNotification(state, action: PayloadAction<Notification>) {
       state.notifications.unshift(action.payload)
+      localStorage.setItem("rommo_notifications", JSON.stringify(state.notifications))
     },
     addMaintenanceRequest(state, action: PayloadAction<Omit<MaintenanceRequest, "id" | "status" | "createdAt">>) {
       const newReq: MaintenanceRequest = {
@@ -362,6 +387,13 @@ const appSlice = createSlice({
         createdAt: new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", weekday: "short" })
       }
       state.maintenanceRequests.unshift(newReq)
+      state.notifications.unshift({
+        id: Date.now(),
+        text: `Maintenance request submitted: ${newReq.category} for ${newReq.bookingTitle}.`,
+        time: "Just now",
+        read: false
+      })
+      localStorage.setItem("rommo_notifications", JSON.stringify(state.notifications))
     },
     setUser(state, action: PayloadAction<UserProfile>) {
       state.user = action.payload

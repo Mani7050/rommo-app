@@ -11,7 +11,7 @@ interface SecurityPinDrawerProps {
 }
 
 export default function SecurityPinDrawer({ isOpen, onClose }: SecurityPinDrawerProps) {
-  const { user, setUser, triggerToast } = useApp()
+  const { user, setUser, triggerToast, setNotifications } = useApp()
   
   const [newPin, setNewPin] = useState("")
   const [confirmPin, setConfirmPin] = useState("")
@@ -53,6 +53,15 @@ export default function SecurityPinDrawer({ isOpen, onClose }: SecurityPinDrawer
         const updatedUser = { ...user, pin: data.pin }
         localStorage.setItem("rommo_user", JSON.stringify(updatedUser))
         triggerToast("Security PIN updated successfully!")
+        setNotifications(prev => [
+          {
+            id: Date.now(),
+            text: "Your security PIN was updated successfully.",
+            time: "Just now",
+            read: false
+          },
+          ...prev
+        ])
         setNewPin("")
         setConfirmPin("")
         onClose()
