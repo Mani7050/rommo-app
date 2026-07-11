@@ -30,7 +30,7 @@ export function OffersDrawer({ showOffers, setShowOffers, offers, handleCopyCoup
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
         transition={{ type: "spring", damping: 26, stiffness: 260 }}
-        className="relative z-10 w-full bg-white rounded-t-[32px] rounded-b-none p-6 max-h-[85%] overflow-y-auto shadow-2xl dark:bg-zinc-900"
+        className="relative z-10 w-full bg-white rounded-none p-6 max-h-[85%] overflow-y-auto shadow-2xl dark:bg-zinc-900"
       >
         <div className="flex items-center justify-between border-b border-zinc-100 pb-4 mb-4 dark:border-zinc-800">
           <div>

@@ -111,7 +111,7 @@ export default function FAQDrawer({ isOpen, onClose }: FAQDrawerProps) {
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
         transition={{ type: "spring", damping: 26, stiffness: 260 }}
-        className="relative z-10 w-full bg-white rounded-t-[32px] rounded-b-none p-6 max-h-[92%] overflow-y-auto shadow-2xl dark:bg-zinc-900 flex flex-col"
+        className="relative z-10 w-full bg-white rounded-none p-6 max-h-[92%] overflow-y-auto shadow-2xl dark:bg-zinc-900 flex flex-col"
       >
         
         {/* Header */}
@@ -124,7 +124,7 @@ export default function FAQDrawer({ isOpen, onClose }: FAQDrawerProps) {
           <button 
             type="button"
             onClick={onClose}
-            className="rounded-full p-1.5 bg-zinc-100 text-zinc-555 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 cursor-pointer"
+            className="rounded-none p-1.5 bg-zinc-100 text-zinc-555 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 cursor-pointer"
           >
             <X className="h-5 w-5" />
           </button>

@@ -15,13 +15,13 @@ export default function ProfilePage() {
       {/* Clean Premium Profile Header */}
       <div className="flex items-center gap-4 bg-zinc-50/30 border border-zinc-100 p-4.5 dark:bg-zinc-900/30 dark:border-zinc-850 rounded-none relative">
         {/* Rounded Profile Avatar */}
-        <div className="h-15 w-15 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xl shadow-xs shrink-0 border border-primary/15">
+        <div className="h-15 w-15 rounded-none bg-primary text-white flex items-center justify-center font-bold text-xl shadow-xs shrink-0 border border-primary/15">
           {user.name.split(" ").map(n => n[0]).join("")}
         </div>
         
         <div className="flex flex-col min-w-0">
           <h3 className="font-extrabold text-zinc-900 dark:text-zinc-100 text-base leading-tight tracking-tight">{user.name}</h3>
-          <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5 truncate">{user.email}</p>
+          <p className="text-xs text-zinc-400 dark:text-zinc-550 mt-0.5 truncate">{user.email}</p>
           
           <div className="flex items-center gap-1.5 mt-2 bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-primary w-fit rounded-none">
             <Award className="h-3.5 w-3.5" />
@@ -34,7 +34,7 @@ export default function ProfilePage() {
       <div className="grid grid-cols-2 gap-4">
         {/* Loyalty Points Card */}
         <div className="bg-zinc-50/30 border border-zinc-100 p-4 flex items-center gap-3.5 dark:bg-zinc-900/30 dark:border-zinc-850 rounded-none">
-          <div className="p-2 bg-primary/10 text-primary rounded-full shrink-0">
+          <div className="p-2 bg-primary/10 text-primary rounded-none shrink-0">
             <Coins className="h-4.5 w-4.5" />
           </div>
           <div className="flex flex-col min-w-0">
@@ -45,7 +45,7 @@ export default function ProfilePage() {
 
         {/* Total Bookings Card */}
         <div className="bg-zinc-50/30 border border-zinc-150 p-4 flex items-center gap-3.5 dark:bg-zinc-900/30 dark:border-zinc-850 rounded-none">
-          <div className="p-2 bg-primary/10 text-primary rounded-full shrink-0">
+          <div className="p-2 bg-primary/10 text-primary rounded-none shrink-0">
             <Calendar className="h-4.5 w-4.5" />
           </div>
           <div className="flex flex-col min-w-0">

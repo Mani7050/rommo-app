@@ -110,7 +110,7 @@ export default function HelpSupportDrawer({ isOpen, onClose }: HelpSupportDrawer
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
         transition={{ type: "spring", damping: 26, stiffness: 260 }}
-        className="relative z-10 w-full bg-white rounded-t-[32px] rounded-b-none p-6 max-h-[92%] overflow-y-auto shadow-2xl dark:bg-zinc-900"
+        className="relative z-10 w-full bg-white rounded-none p-6 max-h-[92%] overflow-y-auto shadow-2xl dark:bg-zinc-900"
       >
         
         {/* Header */}
@@ -123,7 +123,7 @@ export default function HelpSupportDrawer({ isOpen, onClose }: HelpSupportDrawer
           <button 
             type="button"
             onClick={onClose}
-            className="rounded-full p-1.5 bg-zinc-100 text-zinc-555 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 cursor-pointer"
+            className="rounded-none p-1.5 bg-zinc-100 text-zinc-555 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 cursor-pointer"
           >
             <X className="h-5 w-5" />
           </button>
@@ -153,7 +153,7 @@ export default function HelpSupportDrawer({ isOpen, onClose }: HelpSupportDrawer
           >
             My Ticket History
             {tickets.length > 0 && (
-              <span className="px-1.5 py-0.5 bg-primary text-white text-[8px] font-black rounded-full leading-none">
+              <span className="px-1.5 py-0.5 bg-primary text-white text-[8px] font-black rounded-none leading-none">
                 {tickets.length}
               </span>
             )}
@@ -280,7 +280,7 @@ export default function HelpSupportDrawer({ isOpen, onClose }: HelpSupportDrawer
                           <span className="text-[9px] font-black text-primary uppercase tracking-wider">{t.id}</span>
                           <h5 className="font-extrabold text-zinc-900 dark:text-zinc-100 text-xs mt-1 leading-snug truncate">{t.subject}</h5>
                         </div>
-                        <span className={`px-2 py-0.5 text-[8px] font-extrabold uppercase tracking-wider shrink-0 rounded-xs ${
+                        <span className={`px-2 py-0.5 text-[8px] font-extrabold uppercase tracking-wider shrink-0 rounded-none ${
                           t.status === "Open" ? "bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400" :
                           t.status === "In Progress" ? "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400" :
                           "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"

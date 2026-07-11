@@ -100,7 +100,7 @@ export default function MaintenanceCleaningDrawer({ isOpen, onClose }: Maintenan
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
         transition={{ type: "spring", damping: 26, stiffness: 260 }}
-        className="relative z-10 w-full bg-white rounded-t-[32px] rounded-b-none p-6 max-h-[92%] overflow-y-auto shadow-2xl dark:bg-zinc-900"
+        className="relative z-10 w-full bg-white rounded-none p-6 max-h-[92%] overflow-y-auto shadow-2xl dark:bg-zinc-900"
       >
         
         {/* Header */}
@@ -112,7 +112,7 @@ export default function MaintenanceCleaningDrawer({ isOpen, onClose }: Maintenan
           </div>
           <button 
             onClick={onClose}
-            className="rounded-full p-1.5 bg-zinc-100 text-zinc-550 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 cursor-pointer"
+            className="rounded-none p-1.5 bg-zinc-100 text-zinc-555 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 cursor-pointer"
           >
             <X className="h-5 w-5" />
           </button>

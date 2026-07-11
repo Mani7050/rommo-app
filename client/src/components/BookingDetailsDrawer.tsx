@@ -209,7 +209,7 @@ export function BookingDetailsDrawer({
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
         transition={{ type: "spring", damping: 26, stiffness: 260 }}
-        className="w-full bg-white rounded-t-[32px] rounded-b-none p-6 max-h-[90%] overflow-y-auto shadow-2xl dark:bg-zinc-900"
+        className="w-full bg-white rounded-none p-6 max-h-[90%] overflow-y-auto shadow-2xl dark:bg-zinc-900"
       >
         
         {/* Title/Header */}

@@ -154,18 +154,20 @@ export default function DiscoverPage() {
         <button
           type="button"
           onClick={handleVoiceSearch}
-          className={`p-1.5 rounded-full ml-1 cursor-pointer transition-all hover:bg-zinc-100 dark:hover:bg-zinc-800 ${
+          className={`p-1.5 rounded-none ml-1 cursor-pointer transition-all hover:bg-zinc-100 dark:hover:bg-zinc-800 ${
             isListening ? "bg-red-500 text-white animate-pulse" : "text-zinc-400 dark:text-zinc-500"
           }`}
           title="Voice Search / Booking"
         >
           {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
         </button>
-      </div>      {/* AI Room Matcher Promo Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-orange-500 via-orange-600 to-red-650 p-5 rounded-[24px] shadow-lg flex items-center justify-between gap-4 select-none">
-        <div className="absolute top-0 right-0 -mr-6 -mt-6 h-24 w-24 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+      </div>
+
+      {/* AI Room Matcher Promo Banner */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-orange-500 via-orange-600 to-red-650 p-5 rounded-none shadow-lg flex items-center justify-between gap-4 select-none">
+        <div className="absolute top-0 right-0 -mr-6 -mt-6 h-24 w-24 bg-white/10 rounded-none blur-xl pointer-events-none"></div>
         <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-white/20 backdrop-blur-md rounded-full">
+          <div className="p-2.5 bg-white/20 backdrop-blur-md rounded-none">
             <Sparkles className="h-5 w-5 text-white" />
           </div>
           <div>
@@ -175,7 +177,7 @@ export default function DiscoverPage() {
         </div>
         <button
           onClick={() => setShowAiMatch(true)}
-          className="bg-white text-zinc-950 font-black text-[10px] uppercase tracking-widest px-4.5 py-2.5 rounded-full hover:bg-zinc-50 active:scale-95 transition-all shrink-0 cursor-pointer shadow-md hover:shadow-lg"
+          className="bg-white text-zinc-950 font-black text-[10px] uppercase tracking-widest px-4.5 py-2.5 rounded-none hover:bg-zinc-50 active:scale-95 transition-all shrink-0 cursor-pointer shadow-md hover:shadow-lg"
         >
           Match Now
         </button>
@@ -187,7 +189,7 @@ export default function DiscoverPage() {
           <button
             key={category}
             onClick={() => setActiveFilter(category)}
-            className={`rounded-full px-5 py-2 text-xs font-bold transition-all shrink-0 cursor-pointer border ${
+            className={`rounded-none px-5 py-2 text-xs font-bold transition-all shrink-0 cursor-pointer border ${
               activeFilter === category 
                 ? "bg-primary border-primary text-white shadow-md shadow-primary/20" 
                 : "bg-white border-zinc-100 text-zinc-650 hover:border-zinc-200 dark:bg-zinc-900 dark:border-zinc-805 dark:text-zinc-400"
@@ -201,7 +203,7 @@ export default function DiscoverPage() {
       {/* Grid List */}
       <div>
         {filteredRooms.length === 0 ? (
-          <div className="text-center py-12 text-xs text-muted-foreground border border-dashed border-zinc-200 dark:border-zinc-850 p-6 rounded-2xl">
+          <div className="text-center py-12 text-xs text-muted-foreground border border-dashed border-zinc-200 dark:border-zinc-850 p-6 rounded-none">
             No spaces found matching your search.
           </div>
         ) : (
@@ -211,10 +213,10 @@ export default function DiscoverPage() {
               return (
                 <div 
                   key={room.id}
-                  className="group relative flex flex-col overflow-hidden rounded-3xl border border-zinc-100 bg-white shadow-xs dark:border-zinc-850 dark:bg-zinc-900/40 hover:border-zinc-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-zinc-200/40 dark:hover:shadow-none transition-all duration-300"
+                  className="group relative flex flex-col overflow-hidden rounded-none border border-zinc-100 bg-white shadow-xs dark:border-zinc-850 dark:bg-zinc-900/40 hover:border-zinc-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-zinc-200/40 dark:hover:shadow-none transition-all duration-300"
                 >
                   {/* Room Hero Image */}
-                  <div className="relative h-48 w-full overflow-hidden bg-zinc-100 dark:bg-zinc-850 rounded-t-3xl">
+                  <div className="relative h-48 w-full overflow-hidden bg-zinc-100 dark:bg-zinc-850 rounded-none">
                     <img 
                       src={room.image} 
                       alt={room.title} 
@@ -222,20 +224,20 @@ export default function DiscoverPage() {
                       className="h-full w-full object-cover group-hover:scale-103 transition-transform duration-550 cursor-pointer" 
                     />
                     {/* Floating badge */}
-                    <span className="absolute top-3 left-3 bg-zinc-950/75 backdrop-blur-md px-3 py-1 text-[9px] font-bold text-white uppercase tracking-wider rounded-full">
+                    <span className="absolute top-3 left-3 bg-zinc-950/75 backdrop-blur-md px-3 py-1 text-[9px] font-bold text-white uppercase tracking-wider rounded-none">
                       {room.type}
                     </span>
 
                     {/* Live Viewing Activity Counter (Feature 7) */}
-                    <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-xs px-2.5 py-1 rounded-full text-[8.5px] font-bold text-white flex items-center gap-1.5 shadow-xs">
-                      <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-ping"></span>
+                    <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-xs px-2.5 py-1 rounded-none text-[8.5px] font-bold text-white flex items-center gap-1.5 shadow-xs">
+                      <span className="h-1.5 w-1.5 rounded-none bg-green-500 animate-ping"></span>
                       <span>{Math.floor(8 + (room.price % 7))} viewing</span>
                     </div>
 
                     {/* Favorite button */}
                     <button 
                       onClick={() => toggleFavorite(room.id)}
-                      className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-md text-primary shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer rounded-full dark:bg-zinc-900/90"
+                      className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-md text-primary shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer rounded-none dark:bg-zinc-900/90"
                     >
                       <Heart className={`h-4.5 w-4.5 transition-all ${isFav ? "fill-current scale-110" : "text-zinc-400 dark:text-zinc-550"}`} />
                     </button>
@@ -261,7 +263,7 @@ export default function DiscoverPage() {
                         <span className="text-[10px] font-bold text-zinc-800 dark:text-zinc-200">{room.rating}</span>
                       </div>
                       {/* Rooms Left Status */}
-                      <span className="text-[8px] font-extrabold text-red-650 dark:text-red-400 uppercase tracking-widest bg-red-50 dark:bg-red-950/20 px-2 py-0.5 rounded-full">
+                      <span className="text-[8px] font-extrabold text-red-650 dark:text-red-400 uppercase tracking-widest bg-red-50 dark:bg-red-950/20 px-2 py-0.5 rounded-none">
                         {room.price > 5000 ? "1 room left" : "3 rooms left"}
                       </span>
                     </div>
@@ -274,7 +276,7 @@ export default function DiscoverPage() {
                     </div>
                     <button 
                       onClick={() => setSelectedRoom(room)}
-                      className="rounded-full bg-primary px-5 py-2.5 text-xs font-black uppercase tracking-wider text-white hover:bg-primary/95 transition-colors cursor-pointer shadow-md shadow-primary/10"
+                      className="rounded-none bg-primary px-5 py-2.5 text-xs font-black uppercase tracking-wider text-white hover:bg-primary/95 transition-colors cursor-pointer shadow-md shadow-primary/10"
                     >
                       Book Now
                     </button>
@@ -289,13 +291,13 @@ export default function DiscoverPage() {
       {/* AI ROOM MATCHING OVERLAY MODAL */}
       {showAiMatch && (
         <div className="fixed inset-0 z-50 bg-zinc-950/60 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-850 p-6 w-full max-w-sm relative rounded-[28px] shadow-2xl shadow-black/10 animate-scaleUp">
+          <div className="bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-850 p-6 w-full max-w-sm relative rounded-none shadow-2xl shadow-black/10 animate-scaleUp">
             
             {/* Close button */}
             {!isLoadingMatch && (
               <button 
                 onClick={() => setShowAiMatch(false)}
-                className="absolute top-4 right-4 text-zinc-450 hover:text-zinc-655 hover:bg-zinc-100 dark:hover:bg-zinc-900 p-1.5 rounded-full cursor-pointer transition-colors"
+                className="absolute top-4 right-4 text-zinc-450 hover:text-zinc-655 hover:bg-zinc-100 dark:hover:bg-zinc-900 p-1.5 rounded-none cursor-pointer transition-colors"
               >
                 <X className="h-4.5 w-4.5" />
               </button>
@@ -304,7 +306,7 @@ export default function DiscoverPage() {
             {isLoadingMatch ? (
               <div className="flex flex-col items-center justify-center py-10 gap-4 animate-fadeIn text-center">
                 <div className="relative flex items-center justify-center h-16 w-16 mb-2">
-                  <div className="absolute inset-0 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+                  <div className="absolute inset-0 rounded-none border-4 border-primary/20 border-t-primary animate-spin" />
                   <Sparkles className="h-6 w-6 text-primary animate-pulse" />
                 </div>
                 <div>
@@ -321,7 +323,7 @@ export default function DiscoverPage() {
                   {[1, 2, 3, 4].map((step) => (
                     <div 
                       key={step}
-                      className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                      className={`h-1.5 flex-1 rounded-none transition-all duration-300 ${
                         step <= aiStep ? "bg-primary" : "bg-zinc-100 dark:bg-zinc-800"
                       }`}
                     />
@@ -339,7 +341,7 @@ export default function DiscoverPage() {
                           setAiAnswers(prev => ({ ...prev, tripType: "business" }))
                           setAiStep(2)
                         }}
-                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
+                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-none hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
                       >
                         <span className="text-xl">💼</span>
                         <span>Business Trip</span>
@@ -349,7 +351,7 @@ export default function DiscoverPage() {
                           setAiAnswers(prev => ({ ...prev, tripType: "family" }))
                           setAiStep(2)
                         }}
-                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
+                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-none hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
                       >
                         <span className="text-xl">👨‍👩‍👧‍👦</span>
                         <span>Family / Leisure</span>
@@ -371,7 +373,7 @@ export default function DiscoverPage() {
                         step="500"
                         value={aiAnswers.budget}
                         onChange={(e) => setAiAnswers(prev => ({ ...prev, budget: parseInt(e.target.value) }))}
-                        className="w-full h-1 bg-zinc-200 rounded-lg appearance-none cursor-pointer dark:bg-zinc-800 accent-primary"
+                        className="w-full h-1 bg-zinc-200 rounded-none appearance-none cursor-pointer dark:bg-zinc-800 accent-primary"
                       />
                       <div className="flex justify-between text-xs font-bold text-zinc-550 mt-1">
                         <span>₹500</span>
@@ -383,13 +385,13 @@ export default function DiscoverPage() {
                     <div className="flex gap-3 mt-4">
                       <button
                         onClick={() => setAiStep(1)}
-                        className="flex-1 py-2.5 border border-zinc-200 rounded-xl text-zinc-555 font-bold text-[10px] uppercase tracking-wider hover:bg-zinc-50 cursor-pointer transition-all active:scale-98"
+                        className="flex-1 py-2.5 border border-zinc-200 rounded-none text-zinc-555 font-bold text-[10px] uppercase tracking-wider hover:bg-zinc-50 cursor-pointer transition-all active:scale-98"
                       >
                         Back
                       </button>
                       <button
                         onClick={() => setAiStep(3)}
-                        className="flex-1 py-2.5 bg-primary text-white rounded-xl font-bold text-[10px] uppercase tracking-wider hover:bg-primary/95 cursor-pointer transition-all active:scale-98"
+                        className="flex-1 py-2.5 bg-primary text-white rounded-none font-bold text-[10px] uppercase tracking-wider hover:bg-primary/95 cursor-pointer transition-all active:scale-98"
                       >
                         Next
                       </button>
@@ -407,7 +409,7 @@ export default function DiscoverPage() {
                           setAiAnswers(prev => ({ ...prev, ambiance: "quiet" }))
                           setAiStep(4)
                         }}
-                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
+                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-none hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
                       >
                         <span className="text-xl">🤫</span>
                         <span>Quiet Workspace</span>
@@ -417,7 +419,7 @@ export default function DiscoverPage() {
                           setAiAnswers(prev => ({ ...prev, ambiance: "city" }))
                           setAiStep(4)
                         }}
-                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
+                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-none hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
                       >
                         <span className="text-xl">🏙️</span>
                         <span>Premium City View</span>
@@ -425,7 +427,7 @@ export default function DiscoverPage() {
                     </div>
                     <button
                       onClick={() => setAiStep(2)}
-                      className="py-2.5 border border-zinc-200 rounded-xl text-zinc-555 font-bold text-[10px] uppercase tracking-wider hover:bg-zinc-50 cursor-pointer mt-2 transition-all active:scale-98"
+                      className="py-2.5 border border-zinc-200 rounded-none text-zinc-555 font-bold text-[10px] uppercase tracking-wider hover:bg-zinc-50 cursor-pointer mt-2 transition-all active:scale-98"
                     >
                       Back
                     </button>
@@ -443,7 +445,7 @@ export default function DiscoverPage() {
                           setAiAnswers(updatedAnswers)
                           runAiMatching(updatedAnswers)
                         }}
-                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
+                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-none hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
                       >
                         <span className="text-xl">☀️</span>
                         <span>Morning Sunlight</span>
@@ -454,7 +456,7 @@ export default function DiscoverPage() {
                           setAiAnswers(updatedAnswers)
                           runAiMatching(updatedAnswers)
                         }}
-                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-2xl hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
+                        className="p-4 border border-zinc-150 dark:border-zinc-800 rounded-none hover:border-primary hover:bg-primary/5 text-zinc-700 dark:text-zinc-300 font-extrabold text-[11px] text-center cursor-pointer transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-2"
                       >
                         <span className="text-xl">🌅</span>
                         <span>Evening Sunset</span>
@@ -462,7 +464,7 @@ export default function DiscoverPage() {
                     </div>
                     <button
                       onClick={() => setAiStep(3)}
-                      className="py-2.5 border border-zinc-200 rounded-xl text-zinc-555 font-bold text-[10px] uppercase tracking-wider hover:bg-zinc-50 cursor-pointer mt-2 transition-all active:scale-98"
+                      className="py-2.5 border border-zinc-200 rounded-none text-zinc-555 font-bold text-[10px] uppercase tracking-wider hover:bg-zinc-50 cursor-pointer mt-2 transition-all active:scale-98"
                     >
                       Back
                     </button>
@@ -470,7 +472,7 @@ export default function DiscoverPage() {
                 )}
               </>
             )}
-
+ 
           </div>
         </div>
       )}
@@ -478,4 +480,3 @@ export default function DiscoverPage() {
     </div>
   )
 }
-

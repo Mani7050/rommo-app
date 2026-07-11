@@ -158,7 +158,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className="relative z-10 w-full bg-white rounded-t-[32px] rounded-b-none p-6 max-h-[95%] overflow-y-auto shadow-2xl dark:bg-zinc-900"
+        className="relative z-10 w-full bg-white rounded-none p-6 max-h-[95%] overflow-y-auto shadow-2xl dark:bg-zinc-900"
       >
         
         {/* Header Section */}
@@ -169,7 +169,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
             <button 
               type="button"
               onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(room.location)}`, "_blank")}
-              className="flex items-center gap-1 mt-1.5 text-[10px] text-zinc-400 hover:text-primary hover:underline transition-colors cursor-pointer dark:text-zinc-550"
+              className="flex items-center gap-1 mt-1.5 text-[10px] text-zinc-400 hover:text-primary hover:underline transition-colors cursor-pointer dark:text-zinc-555"
             >
               <MapPin className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
               <span>{room.location} (View on Map)</span>
@@ -177,14 +177,14 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
           </div>
           <button 
             onClick={onClose}
-            className="rounded-full p-1.5 bg-zinc-100 text-zinc-550 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 cursor-pointer"
+            className="rounded-none p-1.5 bg-zinc-100 text-zinc-550 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 cursor-pointer"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Hero Gallery Image with 360 Option (Feature 2) */}
-        <div className="relative h-44 w-full overflow-hidden mb-4 bg-zinc-100 dark:bg-zinc-850 rounded-2xl">
+        <div className="relative h-44 w-full overflow-hidden mb-4 bg-zinc-100 dark:bg-zinc-850 rounded-none">
           <img 
             src={room.image} 
             alt={room.title}
@@ -194,13 +194,13 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
           {/* 360 Virtual Tour Button */}
           <button
             onClick={() => setShow360(true)}
-            className="absolute top-3 left-3 bg-zinc-950/80 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[10px] font-bold text-white uppercase tracking-wider flex items-center gap-1.5 hover:bg-primary active:scale-95 transition-all cursor-pointer shadow-md"
+            className="absolute top-3 left-3 bg-zinc-950/80 backdrop-blur-md px-3.5 py-1.5 rounded-none text-[10px] font-bold text-white uppercase tracking-wider flex items-center gap-1.5 hover:bg-primary active:scale-95 transition-all cursor-pointer shadow-md"
           >
             <Eye className="h-3.5 w-3.5 text-white" />
             <span>Virtual 360° Tour</span>
           </button>
 
-          <div className="absolute bottom-3 right-3 bg-zinc-950/75 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-white flex items-center gap-1">
+          <div className="absolute bottom-3 right-3 bg-zinc-950/75 backdrop-blur-md px-3 py-1 rounded-none text-xs font-bold text-white flex items-center gap-1">
             <Star className="h-3.5 w-3.5 fill-yellow-450 text-yellow-450" />
             <span>{room.rating}</span>
             <span className="text-[9px] text-white/60 font-medium">({room.reviews} reviews)</span>
@@ -208,7 +208,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
         </div>
 
         {/* Smart Price Predictor Indicator with interactive SVG/HTML chart (Feature 4) */}
-        <div className="bg-orange-50 border border-orange-200/50 dark:bg-orange-950/20 dark:border-orange-900/30 p-4 mb-4 rounded-2xl text-xs">
+        <div className="bg-orange-50 border border-orange-200/50 dark:bg-orange-950/20 dark:border-orange-900/30 p-4 mb-4 rounded-none text-xs">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-base">📈</span>
             <div>
@@ -282,7 +282,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
               {amenities.map((item) => (
                 <div 
                   key={item.name} 
-                  className="flex items-center gap-2 p-2.5 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-850/50 rounded-xl"
+                  className="flex items-center gap-2 p-2.5 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-850/50 rounded-none"
                 >
                   <span className="text-primary">{item.icon}</span>
                   <span className="font-bold text-zinc-700 dark:text-zinc-350">{item.name}</span>
@@ -303,7 +303,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
                   key={mood.id}
                   type="button"
                   onClick={() => setSelectedMood(mood.id)}
-                  className={`flex flex-col items-center gap-1.5 p-2.5 border min-w-28 text-center transition-all cursor-pointer rounded-xl shrink-0 ${
+                  className={`flex flex-col items-center gap-1.5 p-2.5 border min-w-28 text-center transition-all cursor-pointer rounded-none shrink-0 ${
                     selectedMood === mood.id 
                       ? "border-primary bg-primary/5 text-primary" 
                       : "border-zinc-200 dark:border-zinc-850 hover:bg-zinc-50 dark:hover:bg-zinc-900"
@@ -331,7 +331,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
                     key={addon.id}
                     type="button"
                     onClick={() => toggleAddon(addon)}
-                    className={`flex items-center gap-2 p-2.5 border text-left cursor-pointer transition-all rounded-xl ${
+                    className={`flex items-center gap-2 p-2.5 border text-left cursor-pointer transition-all rounded-none ${
                       isActive 
                         ? "border-primary bg-primary/5 text-primary font-bold shadow-xs" 
                         : "border-zinc-200 dark:border-zinc-850 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300"
@@ -361,7 +361,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
                   setIsSplitActive(!isSplitActive)
                   if (isSplitActive) setSplitEmails([])
                 }}
-                className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full transition-all ${
+                className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-none transition-all ${
                   isSplitActive ? "bg-primary text-white shadow-md shadow-primary/10" : "bg-zinc-100 text-zinc-555 dark:bg-zinc-800 dark:text-zinc-400"
                 }`}
               >
@@ -370,7 +370,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
             </div>
             
             {isSplitActive && (
-              <div className="flex flex-col gap-2 p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-150 dark:border-zinc-850 mt-2 rounded-2xl">
+              <div className="flex flex-col gap-2 p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-150 dark:border-zinc-850 mt-2 rounded-none">
                 <p className="text-[9.5px] text-zinc-450 dark:text-zinc-500 font-semibold uppercase tracking-wider">
                   Invite friends to pay their share online. Total amount will be divided equally.
                 </p>
@@ -380,12 +380,12 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
                     value={friendEmail}
                     onChange={(e) => setFriendEmail(e.target.value)}
                     placeholder="Enter friend's email..."
-                    className="flex-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3.5 py-2 rounded-xl text-xs text-foreground focus:outline-hidden"
+                    className="flex-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3.5 py-2 rounded-none text-xs text-foreground focus:outline-hidden"
                   />
                   <button
                     type="button"
                     onClick={handleAddSplitEmail}
-                    className="bg-zinc-900 text-white font-extrabold text-[9px] uppercase tracking-widest px-4.5 rounded-xl hover:bg-zinc-800 cursor-pointer"
+                    className="bg-zinc-900 text-white font-extrabold text-[9px] uppercase tracking-widest px-4.5 rounded-none hover:bg-zinc-800 cursor-pointer"
                   >
                     Add
                   </button>
@@ -395,7 +395,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
                     {splitEmails.map((email, idx) => (
                       <span 
                         key={email} 
-                        className="bg-white border border-zinc-200 dark:bg-zinc-900 dark:border-zinc-800 text-[9px] font-bold text-zinc-700 dark:text-zinc-350 px-3 py-1 rounded-full flex items-center gap-1.5"
+                        className="bg-white border border-zinc-200 dark:bg-zinc-900 dark:border-zinc-800 text-[9px] font-bold text-zinc-700 dark:text-zinc-350 px-3 py-1 rounded-none flex items-center gap-1.5"
                       >
                         {email}
                         <button 
@@ -421,7 +421,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
               <span className="font-bold text-zinc-400 dark:text-zinc-550 uppercase tracking-wider text-[9px]">
                 Number of Guests
               </span>
-              <div className="flex items-center justify-between border border-zinc-200 dark:border-zinc-800 p-2.5 bg-zinc-50/50 dark:bg-zinc-900/30 rounded-xl">
+              <div className="flex items-center justify-between border border-zinc-200 dark:border-zinc-800 p-2.5 bg-zinc-50/50 dark:bg-zinc-900/30 rounded-none">
                 <button 
                   type="button" 
                   disabled={guests <= 1}
@@ -446,7 +446,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
               <span className="font-bold text-zinc-400 dark:text-zinc-550 uppercase tracking-wider text-[9px]">
                 Select Date
               </span>
-              <div className="relative flex items-center border border-zinc-200 dark:border-zinc-800 p-2.5 bg-zinc-50/50 dark:bg-zinc-900/30 rounded-xl">
+              <div className="relative flex items-center border border-zinc-200 dark:border-zinc-800 p-2.5 bg-zinc-50/50 dark:bg-zinc-900/30 rounded-none">
                 <Calendar className="h-3.5 w-3.5 text-primary mr-2 shrink-0" />
                 <select 
                   value={selectedDate}
@@ -482,7 +482,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
             <Button 
               onClick={handleConfirmBooking}
               disabled={isBooked}
-              className="rounded-full py-3.5 px-6 font-extrabold text-xs uppercase tracking-widest text-primary-foreground bg-primary hover:bg-primary/95 cursor-pointer shadow-md shadow-primary/20 border border-primary/10 flex items-center gap-1.5"
+              className="rounded-none py-3.5 px-6 font-extrabold text-xs uppercase tracking-widest text-primary-foreground bg-primary hover:bg-primary/95 cursor-pointer shadow-md shadow-primary/20 border border-primary/10 flex items-center gap-1.5"
             >
               {isBooked ? (
                 <>
@@ -524,7 +524,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
                 </div>
                 <button 
                   onClick={() => setShow360(false)}
-                  className="rounded-full p-2 bg-zinc-800 text-zinc-400 hover:text-white cursor-pointer"
+                  className="rounded-none p-2 bg-zinc-800 text-zinc-400 hover:text-white cursor-pointer"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -557,7 +557,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
                   type="button"
                   onClick={() => { setPerspective("bed"); setPanOffset(-120); }}
                   style={{ left: `calc(25% + ${panOffset * 1.5}px)` }}
-                  className={`absolute top-[45%] -translate-y-1/2 z-10 h-7 w-7 rounded-full border border-white flex items-center justify-center text-white text-[10px] font-bold shadow-lg transition-transform hover:scale-110 active:scale-95 ${
+                  className={`absolute top-[45%] -translate-y-1/2 z-10 h-7 w-7 rounded-none border border-white flex items-center justify-center text-white text-[10px] font-bold shadow-lg transition-transform hover:scale-110 active:scale-95 ${
                     perspective === "bed" ? "bg-primary animate-ping" : "bg-primary/80"
                   }`}
                 >
@@ -568,7 +568,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
                   type="button"
                   onClick={() => { setPerspective("work"); setPanOffset(0); }}
                   style={{ left: `calc(50% + ${panOffset * 1.5}px)` }}
-                  className={`absolute top-[35%] -translate-y-1/2 z-10 h-7 w-7 rounded-full border border-white flex items-center justify-center text-white text-[10px] font-bold shadow-lg transition-transform hover:scale-110 active:scale-95 ${
+                  className={`absolute top-[35%] -translate-y-1/2 z-10 h-7 w-7 rounded-none border border-white flex items-center justify-center text-white text-[10px] font-bold shadow-lg transition-transform hover:scale-110 active:scale-95 ${
                     perspective === "work" ? "bg-blue-600 animate-ping" : "bg-blue-600/80"
                   }`}
                 >
@@ -579,7 +579,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
                   type="button"
                   onClick={() => { setPerspective("washroom"); setPanOffset(120); }}
                   style={{ left: `calc(75% + ${panOffset * 1.5}px)` }}
-                  className={`absolute top-[60%] -translate-y-1/2 z-10 h-7 w-7 rounded-full border border-white flex items-center justify-center text-white text-[10px] font-bold shadow-lg transition-transform hover:scale-110 active:scale-95 ${
+                  className={`absolute top-[60%] -translate-y-1/2 z-10 h-7 w-7 rounded-none border border-white flex items-center justify-center text-white text-[10px] font-bold shadow-lg transition-transform hover:scale-110 active:scale-95 ${
                     perspective === "washroom" ? "bg-emerald-600 animate-ping" : "bg-emerald-600/80"
                   }`}
                 >
@@ -588,12 +588,12 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
 
                 {/* Overlay compass/guideline */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="h-10 w-10 rounded-full border-2 border-white/20 flex items-center justify-center">
+                  <div className="h-10 w-10 rounded-none border-2 border-white/20 flex items-center justify-center">
                     <Compass className="h-5 w-5 text-white/50 animate-spin" />
                   </div>
                 </div>
                 
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/65 backdrop-blur-xs px-3.5 py-1 rounded-full text-[9px] font-bold text-white uppercase tracking-wider whitespace-nowrap">
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/65 backdrop-blur-xs px-3.5 py-1 rounded-none text-[9px] font-bold text-white uppercase tracking-wider whitespace-nowrap">
                   ↔ Drag left/right OR click hotspots to pan view
                 </div>
               </div>
@@ -606,7 +606,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
                     setPerspective("bed")
                     setPanOffset(-120)
                   }}
-                  className={`p-2 border rounded-xl transition-all cursor-pointer ${
+                  className={`p-2 border rounded-none transition-all cursor-pointer ${
                     perspective === "bed" ? "border-primary bg-primary/5 text-primary" : "border-zinc-850 bg-zinc-900/40 text-zinc-500 hover:border-zinc-700"
                   }`}
                 >
@@ -618,7 +618,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
                     setPerspective("work")
                     setPanOffset(0)
                   }}
-                  className={`p-2 border rounded-xl transition-all cursor-pointer ${
+                  className={`p-2 border rounded-none transition-all cursor-pointer ${
                     perspective === "work" ? "border-primary bg-primary/5 text-primary" : "border-zinc-855 bg-zinc-900/40 text-zinc-500 hover:border-zinc-700"
                   }`}
                 >
@@ -630,7 +630,7 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
                     setPerspective("washroom")
                     setPanOffset(120)
                   }}
-                  className={`p-2 border rounded-xl transition-all cursor-pointer ${
+                  className={`p-2 border rounded-none transition-all cursor-pointer ${
                     perspective === "washroom" ? "border-primary bg-primary/5 text-primary" : "border-zinc-850 bg-zinc-900/40 text-zinc-500 hover:border-zinc-700"
                   }`}
                 >
