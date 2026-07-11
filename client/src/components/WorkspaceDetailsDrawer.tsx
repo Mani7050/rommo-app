@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import { X, Star, MapPin, Wifi, Coffee, Users, Tv, Calendar, Plus, Minus, Check, Eye, Smile, Share2, Compass } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useApp } from "../context/AppContext"
@@ -23,7 +23,26 @@ interface WorkspaceDetailsDrawerProps {
 export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: WorkspaceDetailsDrawerProps) {
   const { triggerToast } = useApp()
   const [guests, setGuests] = useState(2)
-  const [selectedDate, setSelectedDate] = useState("28 Jun, Sun")
+
+  // Generate next 14 days starting from today dynamically
+  const dateOptions = useMemo(() => {
+    const options: string[] = []
+    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    
+    const today = new Date()
+    for (let i = 0; i < 14; i++) {
+      const d = new Date()
+      d.setDate(today.getDate() + i)
+      const dayStr = daysOfWeek[d.getDay()]
+      const monthStr = months[d.getMonth()]
+      const dateNum = String(d.getDate()).padStart(2, '0')
+      options.push(`${dateNum} ${monthStr}, ${dayStr}`)
+    }
+    return options
+  }, [])
+
+  const [selectedDate, setSelectedDate] = useState(dateOptions[0])
   const [isBooked, setIsBooked] = useState(false)
 
   // 360 Tour State
@@ -453,10 +472,11 @@ export default function WorkspaceDetailsDrawer({ room, onClose, onBook }: Worksp
                   onChange={(e) => setSelectedDate(e.target.value)}
                   className="w-full bg-transparent text-zinc-900 dark:text-white font-extrabold focus:outline-hidden cursor-pointer"
                 >
-                  <option value="28 Jun, Sun">28 Jun, Sun</option>
-                  <option value="29 Jun, Mon">29 Jun, Mon</option>
-                  <option value="30 Jun, Tue">30 Jun, Tue</option>
-                  <option value="01 Jul, Wed">01 Jul, Wed</option>
+                  {dateOptions.map((opt) => (
+                    <option key={opt} value={opt} className="dark:bg-zinc-900">
+                      {opt}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
